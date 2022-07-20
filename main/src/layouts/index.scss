@@ -1,0 +1,77 @@
+@include b(frame) {
+    @include e(header) {
+        display: flex;
+        justify-content: space-between;
+        position: fixed;
+        left: 0;
+        right: 0;
+        top: 0;
+        z-index: 1000;
+        height: 68px;
+        padding: 0 20px;
+        background: #fff;
+        box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.12);
+        .left {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            .logo {
+                width: 36px;
+                height: 36px;
+                margin-right: 10px;
+                img {
+                    width: 100%;
+                    height: 100%;
+                }
+            }
+            .title {
+                margin: 0;
+                color: #737E8C;
+                line-height: 24px;
+                font-size: 12px;
+            }
+            .sub-title {
+                margin: 0;
+                font-size: 16px;
+                color: #2E3538;
+                line-height: 1.2;
+                font-weight: bold;
+                max-width: 200px;
+            }
+        }
+        .right {
+            display: flex;
+            align-items: center;
+            .app-avatar {
+                margin-right: 10px;
+            }
+            .account {
+                display: flex;
+                align-items: center;
+                cursor: pointer;
+            }
+        }
+        .center {
+            display: flex;
+            justify-content: center;
+            position: absolute;
+            left: 300px;
+            right: 300px;
+            height: 100%;
+            line-height: 68px;
+        }
+    }
+    @include e(main) {
+        padding-top: 68px;
+        @include when(no) {
+            padding: 0;
+        }
+    }
+    @include e(center) {
+        width: 980px;
+        margin: 30px auto 0 auto;
+    }
+    @include e(breadcrumb) {
+        padding-bottom: 20px;
+    }
+}

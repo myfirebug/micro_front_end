@@ -1,0 +1,29 @@
+@include b(avatar) {
+    width: 29px;
+    height: 29px;
+    background: url('../../assets/images/common/avatar.png')#eee center center no-repeat;
+    background-size: 50% 50%;
+    border-radius: 50%;
+    overflow: hidden;
+    @include when(default) {
+        width: 48px;
+        height: 48px;
+    }
+    @include when(large) {
+        width: 56px;
+        height: 56px;
+    }
+    @include when(mini) {
+        width: 18px;
+        height: 18px;
+    }
+    @include when(great) {
+        width: 108px;
+        height: 108px;
+    }
+    img {
+        width: 100%;
+        height: 100%;
+        vertical-align: top;
+    }
+}

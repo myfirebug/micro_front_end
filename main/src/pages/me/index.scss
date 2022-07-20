@@ -1,0 +1,81 @@
+@include b(me) {
+    width: 980px;
+    margin: 24px auto 0 auto;
+    padding: 0 0 20px 260px;
+    display: flex;
+    @include e(left) {
+        position: fixed;
+        left: 50%;
+        margin-left: -490px;
+        width: 244px;
+        height: 392px;
+        padding: 0 24px;
+        background: #fff;
+        border-radius: 7px;
+        .title {
+            position: relative;
+            height: 48px;
+            line-height: 48px;
+            font-weight: 500;
+            color: #454F54;
+            font-size: 18px;
+            font-weight: bold;
+            border-bottom: 1px solid #F0F2F4;
+            &::after {
+                position: absolute;
+                left: -24px;
+                top: 15px;
+                content: '';
+                width: 3px;
+                height: 18px;
+                border-top-right-radius: 3px;
+                border-bottom-right-radius: 3px;
+                background-color: rgba(59, 159, 247, 1);
+            }
+        }
+        .sub-menu {
+            padding-top: 20px;
+        }
+        .sub-menu__item {
+            height: 40px;
+            padding-left: 20px;
+            line-height: 40px;
+            font-weight: 400;
+            cursor: pointer;
+            a {
+                display: block;
+                color: #454F54;
+                outline: none;
+                transition: all .25s ease 0s;
+            }
+            &:hover,
+            &.is-active {
+                a {
+                    color: #4A92E6;
+                    font-weight: bold;
+                }
+            }
+            &.is-active {
+                border-radius: 7px;
+                background: #F5F6F7;
+            }
+        }
+    }
+    @include e(right) {
+        flex: 1;
+        padding: 0 10px;
+        border-radius: 7px;
+        background-color: #fff;
+        @include m(header) {
+            height: 48px;
+            padding: 0 10px;
+            line-height: 48px;
+            font-size: 18px;
+            font-weight: bold;
+            border-bottom: 1px solid #F0F2F4;
+        }
+        @include m(body) {
+            padding: 0 10px;
+        }
+    }
+}
