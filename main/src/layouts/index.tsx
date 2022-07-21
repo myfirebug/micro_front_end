@@ -4,21 +4,33 @@ import { routePrefix } from '@src/utils/tools'
 import { Dropdown, Menu } from 'antd'
 import { appHistory, AppLink } from '@ice/stark-app'
 import { LogoutOutlined } from '@ant-design/icons'
+import { IAuthappItem, IMenu } from '@src/store/actionType'
 import './index.scss'
+// 自定义菜单
+import CustomMenu from './components/menu'
 // 头像
 import CostomAvatar from '@src/components/avatar'
 
 interface ILayoutsProps {
   pathname: string;
   children: ReactNode;
+  authApps: IAuthappItem[];
+  menus: IMenu[];
+  getMenu: (appCode?: string, callback?: Function) => void;
 }
 
 const Layouts: FC<ILayoutsProps> = ({
   pathname,
-  children
+  children,
+  authApps,
+  getMenu,
+  menus
 }) => {
   // 获取平台数据
   const [platform, setPlatform] = useState<any>(session.getItem('platform'))
+  // 展开收起
+  const [collapsed, setCollapsed] = useState(false)
+
   useEffect(() => {
     if (platform?.appLogo) {
       document.getElementById('js_favicon')?.setAttribute('href', platform.appLogo)
@@ -61,10 +73,13 @@ const Layouts: FC<ILayoutsProps> = ({
     }
   }, [pathname])
 
-
-  // 跳到主应用的首页
-  const jumpHome = () => {
-    appHistory.replace(`${routePrefix}/home`)
+  // 跳转子平台
+  const jumpManage = (item: any) => {
+    if (item.appCode !== session.getItem('appCode')) {
+      getMenu(item.appCode, () => {
+        appHistory.replace(`${routePrefix}/${item.appCode}`)
+      })
+    }
   }
 
   return (
@@ -72,19 +87,35 @@ const Layouts: FC<ILayoutsProps> = ({
       {
         isShowHead ?
           <header className="app-frame__header">
-            <div
-              onClick={jumpHome}
-              className="left">
+            <div className={`left ${collapsed ? 'is-close' : ''}`}>
               <div className="logo">
-                <img src={platform.appLogo} alt="logo" />
+                <img src={platform.appLogo} alt={platform.appTitle} />
               </div>
-              <div className="content">
-                <h2 className='sub-title'>{platform.appTitle}</h2>
-              </div>
+              {
+                !collapsed ?
+                  <p className='sitename'>{platform.appTitle}</p> : null
+              }
             </div>
-            <div className="center" id="js-menu"></div>
+            <div className='center'>
+              {
+                authApps.map(item => {
+                  if (item.appCode !== 'public') {
+                    return (
+                      <div
+                        key={item.xdid}
+                        onClick={() => jumpManage(item)}
+                        className={`${item.appCode === session.getItem('appCode') ? 'is-active' : ''}`}>
+                        {item.appTitle}
+                      </div>
+                    )
+                  } else {
+                    return null
+                  }
+                })
+              }
+            </div>
             <div className="right">
-              <Dropdown overlay={menuHeaderDropdown}>
+              <Dropdown overlay={menuHeaderDropdown} className="user-wrapper">
                 <span className='account' style={{ marginLeft: 15 }}>
                   <CostomAvatar src="" />
                   <span className={`anticon`}>{session.getItem('username')}</span>
@@ -93,8 +124,23 @@ const Layouts: FC<ILayoutsProps> = ({
             </div>
           </header> : null
       }
-      <div className={`app-frame__main ${!isShowHead ? 'is-no' : ''}`}>
-        {children}
+      <div className={`app-frame__main ${collapsed ? 'is-close' : (!isShowHead ? 'is-no' : '')}`}>
+        {
+          isShowHead ?
+            <div className={`app-frame__aside ${collapsed ? 'is-close' : ''}`}>
+              <CustomMenu
+                menu={menus}
+                setCollapsed={setCollapsed}
+                collapsed={collapsed}
+                pathname={pathname}
+              />
+            </div> : null
+        }
+        <div className={`app-frame__body ${isShowHead ? '' : 'is-blank'}`}>
+          {
+            children
+          }
+        </div>
       </div>
     </div>
   )

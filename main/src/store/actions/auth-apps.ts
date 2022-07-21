@@ -21,9 +21,14 @@ export const getAuthApps = (callback: Function) => (dispatch: Dispatch) => {
 	setTimeout(() => {
 		const datas: IAuthappItem[] = [
 			{
-				appCode: 'xxx',
-				appTitle: 'xxxxxx',
+				appCode: 'screen',
+				appTitle: '大屏管理系统',
 				xdid: 1
+			},
+			{
+				appCode: 'survey',
+				appTitle: '调查管理系统',
+				xdid: 2
 			}
 		];
 		dispatch(actionAuthApps(datas));

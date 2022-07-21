@@ -11,6 +11,7 @@ import Loading from '@src/components/loading'
 import { AppRouter, AppRoute } from '@ice/stark'
 import Layouts from '@src/layouts'
 import { connect } from 'react-redux'
+import { getMenu } from '@src/store/actions/authorization'
 import { ALL_STATE, IAuthappItem, IMenu } from '@store/actionType'
 // 子应用如果需要带token就需要使用该组件
 import AuthAppRoute from '@src/components/auth-app-route'
@@ -29,21 +30,21 @@ const baseUrl = process.env.REACT_APP_ENV
 interface IAppProps {
   authApps: IAuthappItem[];
   menus: IMenu[];
+  getMenu: (appCode?: string, callback?: Function) => void;
 }
 
 // 对应的路由前缀
 const prefix: any = {
-  // 初中评价方案管理
-  application_first_evaluate_app: 'application_first_evaluate_app',
-  // 高中评价方案管理
-  application_high_evaluate_app: 'application_first_evaluate_app',
-  // 高中生涯
-  application_high_career_app: 'application_high_career_app'
+  // 大屏管理系统
+  screen: 'screen',
+  // 调查管理系统
+  survey: 'survey'
 }
 
 const App: FC<IAppProps> = ({
   authApps,
-  menus
+  menus,
+  getMenu
 }) => {
   const [pathname, setPathname] = useState('/login')
 
@@ -57,6 +58,9 @@ const App: FC<IAppProps> = ({
       <Loading />
     }>
       <Layouts
+        menus={menus}
+        getMenu={getMenu}
+        authApps={authApps}
         pathname={pathname}>
         <AppRouter
           LoadingComponent={
@@ -92,12 +96,6 @@ const App: FC<IAppProps> = ({
                     path="/login"
                     component={lazy(() => import(/*webpackChunkName:"login"*/'@pages/login'))}
                   />
-                  {/*首页*/}
-                  <ComPrivateRoute
-                    path="/home"
-                    title="首页"
-                    isPrivate={true}
-                    component={lazy(() => import(/*webpackChunkName:"home"*/'@pages/home'))} />
                   {/*404*/}
                   <ComPrivateRoute
                     path="/404"
@@ -130,7 +128,9 @@ const mapStateToProps = (state: ALL_STATE) => ({
 });
 
 // 将 对应action 插入到组件的 props 中
-const mapDispatchToProps = {};
+const mapDispatchToProps = {
+  getMenu
+};
 
 export default connect(
   mapStateToProps,

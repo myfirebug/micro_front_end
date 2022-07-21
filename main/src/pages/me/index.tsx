@@ -8,7 +8,6 @@ import ComPrivateRoute from '@src/components/private-route'
 import session from '@src/utils/session-storage'
 import { AppLink } from '@ice/stark-app'
 import { routePrefix } from '@src/utils/tools'
-import './index.scss'
 interface IAccountProps { }
 const menus = [{
   path: `${routePrefix}/me/information`,

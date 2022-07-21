@@ -10,16 +10,19 @@ import session from '@src/utils/session-storage'
 import { connect } from 'react-redux'
 import { ALL_STATE } from '@store/actionType'
 import { getAuthApps } from '@src/store/actions/auth-apps'
+import { getMenu } from '@src/store/actions/authorization'
 import { appHistory } from '@ice/stark-app'
 import { routePrefix } from '@src/utils/tools'
 import './index.scss'
 
 interface ILoginProps {
   getAuthApps: (callback: Function) => void;
+  getMenu: (appCode: string, callback: Function) => void;
 }
 
 const Login: FC<ILoginProps> = ({
-  getAuthApps
+  getAuthApps,
+  getMenu
 }) => {
   // 获取form实例
   const [loginForm] = Form.useForm()
@@ -32,16 +35,23 @@ const Login: FC<ILoginProps> = ({
   }, [])
   // 登录
   const onFinish = (values: any) => {
+    // 设置token
     session.setItem('access_token', values.username + values.password)
+    // 设置用户名
     session.setItem('username', values.username)
+    // 设置刷新token
     session.setItem('refresh_token', values.username + values.password)
+    // 设置logo,网站名称
     session.setItem('platform', {
       appLogo: '//lhcdn.lanhuapp.com/web/imgs/lanhuLogo1db1cd87.svg',
-      appTitle: '微前端-飞冰'
+      appTitle: '微前端-大合唱'
     })
     getAuthApps((data: any[]) => {
       if (data.length) {
-        appHistory.replace(`${routePrefix}/home`)
+        // 这里需要获取菜单
+        getMenu(data[0].appCode, () => {
+          appHistory.replace(`${routePrefix}/${data[0].appCode}`)
+        })
       }
     })
   }
@@ -50,7 +60,7 @@ const Login: FC<ILoginProps> = ({
       <div className="app-login__form">
         <div className="header">
           <div className="logo"></div>
-          <h2 className="title">微前端-飞冰</h2>
+          <h2 className="title">微前端-大合唱</h2>
         </div>
         <div className="body">
           <Form
@@ -102,7 +112,8 @@ const mapStateToProps = (state: ALL_STATE) => ({
 
 // 将 对应action 插入到组件的 props 中
 const mapDispatchToProps = {
-  getAuthApps
+  getAuthApps,
+  getMenu
 };
 
 export default connect(

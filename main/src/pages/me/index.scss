@@ -1,15 +1,11 @@
 @include b(me) {
-    width: 980px;
-    margin: 24px auto 0 auto;
-    padding: 0 0 20px 260px;
+    margin: 10px;
     display: flex;
     @include e(left) {
-        position: fixed;
-        left: 50%;
-        margin-left: -490px;
         width: 244px;
         height: 392px;
         padding: 0 24px;
+        margin-right: 10px;
         background: #fff;
         border-radius: 7px;
         .title {

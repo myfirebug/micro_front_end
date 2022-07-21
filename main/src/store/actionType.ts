@@ -39,8 +39,10 @@ export type MENU_STATE = IMenu[];
 // authorization 数据类型
 export interface IAuthorization {
 	menu: MENU_STATE;
-	// 路由
-	data: MENU_STATE;
+	// 公用的路由
+	common: MENU_STATE;
+	// 其他路由
+	other: MENU_STATE;
 }
 
 // 获取菜单
