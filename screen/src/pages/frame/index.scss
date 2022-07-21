@@ -1,0 +1,68 @@
+@include b(screen-layout) {
+    display: flex;
+    @include e(left) {
+        height: 100vh;
+        background: #001529;
+        .bg-menus {
+            position: relative;
+            height: 100%;
+            width: 200px;
+            transition: all .25s ease 0s;
+            @include when(close) {
+                width: 80px;
+            }
+            .switch {
+                position: absolute;
+                left: 0;
+                bottom: 0;
+                right: 0;
+                height: 36px;
+                line-height: 36px;
+                cursor: pointer;
+                text-align: center;
+                color: #fff;
+                opacity: 0.8;
+                transition: all .25s ease 0s;
+                &:hover {
+                    opacity: 1;
+                }
+            }
+        }
+    }
+    @include e(right) {
+        flex: 1;
+        background-color: #f5f5f5;
+    }
+    @include e(breadcrumb) {
+        padding: 10px;
+        background: #fff;
+        @include m(text) {
+            .title {
+                margin-right: 12px;
+                margin-bottom: 0;
+                color: rgba(0, 0, 0, .85);
+                font-weight: 600;
+                font-size: 20px;
+                line-height: 32px;
+                overflow: hidden;
+                white-space: nowrap;
+                text-overflow: ellipsis;
+            }
+            .sub-title {
+                margin-right: 12px;
+                color: rgba(0, 0, 0, .45);
+                font-size: 14px;
+                line-height: 1.5715;
+                overflow: hidden;
+                white-space: nowrap;
+                text-overflow: ellipsis;
+            }
+        }
+    }
+    @include e(main) {
+        padding: 10px;
+        @include m(content) {
+            background-color: #fff;
+        }
+    }
+}

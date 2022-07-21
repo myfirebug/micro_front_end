@@ -1,5 +1,4 @@
 import { IAnyObject } from '@src/types';
-import session from './session-storage';
 
 /**
  * 获取参数值
@@ -40,7 +39,7 @@ export function replaceParamVal(
  * @param fmt
  * @returns {*}
  */
-export function fmtDate(dateString: string, fmt: string): string {
+export function fmtDate(dateString: string | number, fmt: string): string {
 	const date = new Date(dateString);
 	const o: IAnyObject = {
 		'M+': date.getMonth() + 1,
@@ -170,17 +169,38 @@ export function getTreeData(datas: any[]): any[] {
 }
 
 /**
- * 修改递归数据的resUrl
- * @param datas
+ * 查找给定的字段名查找数组里值对应的值
+ * @param datas 数据
+ * @param value 字段值
+ * @param field 字段名
  */
-export function modifyResUrl(datas: any[], prefix: string): any[] {
-	for (let i = 0; i < datas.length; i++) {
-		datas[i].resUrl = prefix + datas[i].resUrl;
-		if (datas[i].subResource) {
-			modifyResUrl(datas[i].subResource, prefix);
-		}
+
+export function lookupTreeByValue(
+	datas: any[],
+	value: number | string,
+	field: string
+) {
+	let hasFound = false, // 表示是否有找到id值
+		result: any = null;
+	if (!datas) {
+		return false;
 	}
-	return datas;
+	const fn = function (datas: any[]) {
+		if (Array.isArray(datas) && !hasFound) {
+			// 判断是否是数组并且没有的情况下，
+			for (let i = 0; i < datas.length; i++) {
+				if (datas[i][field] === value) {
+					result = datas[i];
+					hasFound = true;
+					break;
+				} else if (datas[i].childList && datas[i].childList.length) {
+					fn(datas[i].childList);
+				}
+			}
+		}
+	};
+	fn(datas);
+	return result;
 }
 
 /**
@@ -355,7 +375,7 @@ export const lockMaskScroll = ((bodyClass) => {
  * @param str
  * @returns
  */
-export const timeAgo = function (str: string | number): string {
+export const timeAgo = function (str: string): string {
 	if (!str) return '';
 	const date = new Date(str);
 	const time = new Date().getTime() - date.getTime();
@@ -434,7 +454,7 @@ export const getRouters = function (data: any[], routers: any) {
 		return [];
 	}
 	data.map((item) => {
-		if (item.components || item.resUrl.indexOf('/public') === 0) {
+		if (item.components && (item.isMemu === 1 || item.isMemu === 4)) {
 			routers.push({
 				id: routers.length,
 				path: item.resUrl,
@@ -456,10 +476,11 @@ export const getRouters = function (data: any[], routers: any) {
  */
 // @ts-ignore
 export const recursionTree = (tree: any[]): any => {
-	return tree.map((item) => ({
+	return tree.map((item: any) => ({
 		key: item.insSn,
 		title: item.insName,
 		icon: item.insPic,
+		insType: item.insType,
 		children: Array.isArray(item.childList) ? recursionTree(item.childList) : []
 	}));
 };
@@ -500,19 +521,11 @@ export const getEventPath = (event: any) => {
 	return event.path || (event.composedPath && event.composedPath()) || '';
 };
 
-// 获取平台API前缀
-export const getServicePrefix = () => {
-	const appCode = session.getItem('appCode');
-	// 服务前缀
-	const serviceArr: IAnyObject = {
-		application_base_app: 'cloud-service',
-		application_first_evaluate_app: 'comprehensive-service',
-		application_high_evaluate_app: 'highcomprehensive-service',
-		application_high_career_app: 'career-service'
-	};
-
-	return serviceArr[appCode];
+export const validateionLen = {
+	defalut: 50,
+	small: 20,
+	large: 100
 };
 
 // 路由前缀，主要用于部署时
-export const routePrefix = '/application';
+export const routePrefix = '/manamage';
