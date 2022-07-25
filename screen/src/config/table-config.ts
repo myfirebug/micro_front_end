@@ -20,7 +20,7 @@ const tableConfig = {
 		// fullScreen: true,
 		setting: true
 	},
-	rowKey: 'xdid'
+	rowKey: 'id'
 };
 
 export default tableConfig;

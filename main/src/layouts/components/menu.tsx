@@ -32,7 +32,7 @@ const CustomMenu = memo((props: ICustomMenuProps) => {
     pathname
   } = props
   // 获取当前选中的路由
-  const [current, setCurrent] = useState(session.getItem('currentUrl') || `${routePrefix}/base_app/home`)
+  const [current, setCurrent] = useState(session.getItem('currentPath') || '')
   // 所有一级菜单
   const rootSubmenuKeys = useRef<string[]>([]);
   // 打开的菜单
@@ -99,7 +99,7 @@ const CustomMenu = memo((props: ICustomMenuProps) => {
   const menuClickHandler = (key: string) => {
     console.log(key, 'keykeykeykeykey')
     setCurrent(key)
-    session.setItem('currentUrl', key)
+    session.setItem('currentPath', key)
   }
   // 展开收起菜单时
   const onOpenChange = (keys: any) => {

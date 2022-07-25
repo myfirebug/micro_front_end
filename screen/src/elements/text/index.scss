@@ -1,0 +1,5 @@
+@include b(widget) {
+    @include e(text) {
+        position: absolute;
+    }
+}
