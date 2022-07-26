@@ -1,0 +1,22 @@
+@include b(screen-disign) {
+    @include e(body) {
+        @include m(left) {
+            width: 200px;
+            background-color: #535353;
+            border-right: 1px solid rgba(0, 0, 0, .8);
+            .header {
+                height: 30px;
+                padding: 0 10px;
+                line-height: 30px;
+                color: #a0a0a0;
+                font-size: 12px;
+                background-color: #424242;
+                border-bottom: 1px solid #383838;
+                border-top: 1px solid #383838;
+            }
+            .body {
+                padding: 10px;
+            }
+        }
+    }
+}

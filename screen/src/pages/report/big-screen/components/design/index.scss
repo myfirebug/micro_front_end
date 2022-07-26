@@ -1,131 +1,13 @@
 @include b(screen-disign) {
     user-select: none;
-    @include e(header) {
-        position: relative;
-        z-index: 1000;
-        display: flex;
-        height: 50px;
-        color: rgba(255, 255, 255, .6);
-        background-color: #535353;
-        border-bottom: 1px solid rgba(0, 0, 0, .8);
-        p {
-            margin: 0;
-            font-size: 12px;
-            line-height: 1;
-        }
-        @include m(left) {
-            display: flex;
-            height: 100%;
-            font-size: 16px;
-            li {
-                position: relative;
-                margin-right: 5px;
-                padding: 3px 8px 0 8px;
-                font-size: 16px;
-                cursor: pointer;
-                text-align: center;
-                transition: all .25s ease 0s;
-                &:hover {
-                    color: #fff;
-                    background-color: rgba(0, 0, 0, .8);
-                    .elements {
-                        display: block;
-                    }
-                }
-            }
-            .elements {
-                display: none;
-                position: absolute;
-                left: 0;
-                top: 49px;
-                width: 400px;
-                height: 400px;
-                background-color: rgba(0, 0, 0, .8);
-            }
-        }
-        @include m(center) {
-            flex: 1;
-            display: flex;
-            justify-content: flex-end;
-            height: 100%;
-            padding-left: 10px;
-            li {
-                display: flex;
-                align-items: center;
-                margin-right: 5px;
-                padding: 0 8px;
-                font-size: 16px;
-                cursor: pointer;
-                text-align: center;
-                transition: all .25s ease 0s;
-                &:hover {
-                    color: #fff;
-                    background-color: rgba(0, 0, 0, .8);
-                }
-            }
-        }
-        @include m(right) {
-            position: relative;
-            display: flex;
-            &:before {
-                position: absolute;
-                left: 0;
-                top: 50%;
-                transform: translateY(-50%);
-                content: '';
-                width: 1px;
-                height: 16px;
-                background-color: rgba(0, 0, 0, 0.4);
-            }
-            li {
-                margin-left: 10px;
-                padding: 0 15px;
-                line-height: 50px;
-                font-size: 20px;
-                &:hover {
-                    cursor: pointer;
-                    color: #fff;
-                    background-color: #1890ff;
-                }
-            }
-        }
-    }
     @include e(body) {
         display: flex;
         height: calc(100vh - 50px);
-        @include m(left) {
-            width: 200px;
-            background-color: #535353;
-            border-right: 1px solid rgba(0, 0, 0, .8);
-            .header {
-                height: 30px;
-                padding: 0 10px;
-                line-height: 30px;
-                color: #a0a0a0;
-                font-size: 12px;
-                background-color: #424242;
-                border-bottom: 1px solid #383838;
-            }
-        }
         @include m(center) {
             position: relative;
             flex: 1;
             padding: 16px 0 0 16px;
             background-color: #282828;
-        }
-        @include m(right) {
-            width: 300px;
-            background-color: #535353;
-            border-left: 1px solid rgba(0, 0, 0, .8);
-            .header {
-                height: 30px;
-                padding: 0 10px;
-                line-height: 30px;
-                color: #a0a0a0;
-                font-size: 12px;
-                background-color: #424242;
-                border-bottom: 1px solid #383838;
-            }
         }
     }
 }

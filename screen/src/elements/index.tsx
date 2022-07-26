@@ -9,18 +9,14 @@ import {
   ClockCircleOutlined,
   TableOutlined
 } from '@ant-design/icons'
-
-// 所有组件地址
-export const components: any = {
-  'widget-text': require('./text').default
-}
+import './index.scss'
 
 // 组件分类
-export const elements = [{
+export const componentsClassify = [{
   type: 'text',
   icon: <FontSizeOutlined />,
   name: '文本',
-  components: 'widget-text'
+  widgetName: 'widget-text'
 },
 {
   type: 'image',
@@ -62,3 +58,10 @@ export const elements = [{
   icon: <RadarChartOutlined />,
   name: '雷达图'
 }]
+
+// 所有组件地址
+const components: any = {
+  'widget-text': require('./text').default
+}
+
+export default components

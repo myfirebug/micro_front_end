@@ -1,0 +1,72 @@
+@include b(screen-disign) {
+    @include e(body) {
+        @include m(right) {
+            width: 300px;
+            background-color: #535353;
+            border-left: 1px solid rgba(0, 0, 0, .8);
+            .body {
+                padding: 0 10px;
+            }
+            .custom-tabs {
+                .ant-tabs-nav {
+                    background-color: #424242;
+                    &:before {
+                        border-bottom-color: #383838;
+                    }
+                }
+                .ant-tabs-tab {
+                    margin: 0;
+                    padding: 5px 10px;
+                    background-color: #424242;
+                    border-bottom: 1px solid #383838;
+                    border-right: 1px solid #383838;
+                    color: #a0a0a0;
+                }
+                .ant-tabs-tab-active {
+                    background-color: #535353;
+                    border-bottom: none;
+                    .ant-tabs-tab-btn {
+                        color: #fff;
+                    }
+                }
+                .ant-tabs-ink-bar {
+                    display: none;
+                }
+            }
+            .ant-form-item {
+                margin-bottom: 14px;
+            }
+            .ant-form-item-label>label {
+                color: rgba(255, 255, 255, .5);
+            }
+            .ant-input-affix-wrapper,
+            .ant-input,
+            .ant-input-number {
+                background-color: #424242;
+                border: 1px solid #383838;
+                color: rgba(255, 255, 255, .8)
+            }
+            .color-wrapper {
+                position: relative;
+                width: 100%;
+                height: 32px;
+                text-align: center;
+                line-height: 32px;
+                color: #fff;
+                cursor: pointer;
+                background-color: #424242;
+                border: 1px solid #383838;
+                border-radius: 3px;
+                &:hover .color {
+                    display: block;
+                }
+                .color {
+                    position: absolute;
+                    right: 0;
+                    z-index: 100;
+                    display: none;
+                }
+            }
+        }
+    }
+}

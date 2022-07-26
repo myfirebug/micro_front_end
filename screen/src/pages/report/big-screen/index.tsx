@@ -161,7 +161,7 @@ const BigScreen: FC<IBigScreenProps> = () => {
       <Drawer
         title={drawer.title}
         width={drawer.width}
-        destroyOnClose={false}
+        destroyOnClose={true}
         headerStyle={{
           display: 'none'
         }}
