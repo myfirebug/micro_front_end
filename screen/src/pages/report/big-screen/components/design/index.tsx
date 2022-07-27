@@ -39,8 +39,9 @@ interface IDisignProps {
   modifyScreen: (datas: any) => void;
   screen: IScreen;
   pages: IPage[];
-  addLargeScreenPage: (data: IPage) => void;
-  delLargeScreenPage: (id: string) => void;
+  addLargeScreenPage: (data: IPage, callback?: Function) => void;
+  delLargeScreenPage: (id: string, callback?: Function) => void;
+  modifyLargeScreenPage: (id: string, data: IPage, callback?: Function) => void;
 }
 
 const Disign: FC<IDisignProps> = ({
@@ -48,7 +49,10 @@ const Disign: FC<IDisignProps> = ({
   setDrawer,
   modifyScreen,
   screen,
-  pages
+  pages,
+  addLargeScreenPage,
+  delLargeScreenPage,
+  modifyLargeScreenPage
 }) => {
 
   // 获取装组件的盒子，这里需要获取他的宽度
@@ -93,6 +97,7 @@ const Disign: FC<IDisignProps> = ({
           pages={pages}
           addLargeScreenPage={addLargeScreenPage}
           delLargeScreenPage={delLargeScreenPage}
+          modifyLargeScreenPage={modifyLargeScreenPage}
         />
         <div className='app-screen-disign__body--center'>
           <Ruler />
@@ -153,7 +158,10 @@ const Disign: FC<IDisignProps> = ({
           </div>
         </div>
         {/* 右边 */}
-        <DesignBodyRight screen={screen} modifyScreen={modifyScreen} />
+        {
+          pages.length &&
+          <DesignBodyRight screen={screen} modifyScreen={modifyScreen} />
+        }
       </div>
     </div>
   )

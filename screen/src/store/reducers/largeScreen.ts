@@ -46,7 +46,11 @@ export const largeScreen = (
 				}
 			};
 		case ADD_LARGESCREEN_PAGE:
-			return state;
+			return {
+				...state,
+				pages: [...state.pages, action.data],
+				currentPage: action.data
+			};
 		case DEL_LARGESCREEN_PAGE:
 			return state;
 		case MODIFY_LARGESCREEN_PAGE:

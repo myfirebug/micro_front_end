@@ -52,6 +52,7 @@ export interface IDelLargeScreenPageAction {
 export interface IModifyLargeScreenPageAction {
 	type: MODIFY_LARGESCREEN_PAGE_TYPE;
 	id: string;
+	data: IPage;
 }
 
 // 添加元素
@@ -115,10 +116,12 @@ const actionDelLargeScreenPage = (id: string): IDelLargeScreenPageAction => ({
 
 // 修改页面数据的方法
 const actionModifyLargeScreenPage = (
-	id: string
+	id: string,
+	data: IPage
 ): IModifyLargeScreenPageAction => ({
 	type: MODIFY_LARGESCREEN_PAGE,
-	id
+	id,
+	data
 });
 
 // 新增元素数据的方法
@@ -167,19 +170,25 @@ export const getLargeScreenPages = (datas: IPage[]) => (dispatch: Dispatch) => {
 };
 
 // 新增页面数据
-export const addLargeScreenPage = (data: IPage) => (dispatch: Dispatch) => {
-	dispatch(actionAddLargeScreenPage(data));
-};
+export const addLargeScreenPage =
+	(data: IPage, callback?: Function) => (dispatch: Dispatch) => {
+		dispatch(actionAddLargeScreenPage(data));
+		callback && callback();
+	};
 
 // 删除页面数据
-export const delLargeScreenPage = (id: string) => (dispatch: Dispatch) => {
-	dispatch(actionDelLargeScreenPage(id));
-};
+export const delLargeScreenPage =
+	(id: string, callback?: Function) => (dispatch: Dispatch) => {
+		dispatch(actionDelLargeScreenPage(id));
+		callback && callback();
+	};
 
 // 修改页面数据
-export const modifyLargeScreenPage = (id: string) => (dispatch: Dispatch) => {
-	dispatch(actionModifyLargeScreenPage(id));
-};
+export const modifyLargeScreenPage =
+	(id: string, data: IPage, callback?: Function) => (dispatch: Dispatch) => {
+		dispatch(actionModifyLargeScreenPage(id, data));
+		callback && callback();
+	};
 
 // 新增元素数据
 export const addLargeScreenElement = (data: IPage) => (dispatch: Dispatch) => {
