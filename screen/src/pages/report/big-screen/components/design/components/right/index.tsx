@@ -1,24 +1,34 @@
 import {
-  FC
+  FC, useEffect, useState
 } from 'react'
 import './index.scss'
-import { Tabs, Form, Input, InputNumber, FormInstance, Row, Col } from 'antd'
-import { widgetConfigure, pageConfigure, coordinateConfigure } from '@src/elements/tools'
+import { Tabs, Form, Input, InputNumber, FormInstance, Row, Col, Select } from 'antd'
+import { pageConfigure, coordinateConfigure } from '@src/widget/tools'
 import { SketchPicker } from 'react-color'
-import { IScreen } from '@src/store/actionType'
+import { IScreen, IWidget } from '@src/store/actionType'
 
 const { TextArea } = Input
 const { TabPane } = Tabs
+const { Option } = Select
 
 interface IDesignBodyRightProps {
   screen: IScreen;
   modifyScreen: (datas: any) => void;
+  currentWidgetId: string;
+  currentWidget: IWidget;
+  modifyLargeScreenElement: (id: string, data: IWidget, callback?: Function) => void;
 }
 
 const DesignBodyRight: FC<IDesignBodyRightProps> = ({
   screen,
-  modifyScreen
+  modifyScreen,
+  currentWidgetId,
+  currentWidget,
+  modifyLargeScreenElement
 }) => {
+  const [key, setKey] = useState('1')
+  // 配置from
+  const [configureForm] = Form.useForm()
   // 页面from
   const [pageForm] = Form.useForm()
   // 坐标from
@@ -41,7 +51,7 @@ const DesignBodyRight: FC<IDesignBodyRightProps> = ({
                   name={item.name}
                   rules={[{ required: item.require }]}
                 >
-                  <Input />
+                  <Input placeholder={item.placeholder} />
                 </Form.Item>
               }
               {
@@ -51,7 +61,7 @@ const DesignBodyRight: FC<IDesignBodyRightProps> = ({
                   name={item.name}
                   rules={[{ required: item.require }]}
                 >
-                  <InputNumber style={{ width: '100%' }} />
+                  <InputNumber style={{ width: '100%' }} placeholder={item.placeholder} />
                 </Form.Item>
               }
               {
@@ -61,10 +71,29 @@ const DesignBodyRight: FC<IDesignBodyRightProps> = ({
                   name={item.name}
                   rules={[{ required: item.require }]}
                 >
-                  <TextArea rows={8} />
+                  <TextArea rows={8} placeholder={item.placeholder} />
                 </Form.Item>
               }
-              {/*  */}
+              {
+                item.type === 'Select' &&
+                <Form.Item
+                  label={item.label}
+                  name={item.name}
+                  rules={[{ required: item.require }]}
+                >
+                  <Select placeholder={item.placeholder}>
+                    {
+                      item.options.map((item: any) => (
+                        <Option
+                          key={item.code}
+                          value={item.code}>
+                          {item.name}
+                        </Option>
+                      ))
+                    }
+                  </Select>
+                </Form.Item>
+              }
               {
                 item.type === 'SketchPicker' &&
                 <Form.Item label={item.label}>
@@ -75,7 +104,7 @@ const DesignBodyRight: FC<IDesignBodyRightProps> = ({
                         name={item.name}
                         rules={[{ required: item.require }]}
                       >
-                        <Input allowClear />
+                        <Input allowClear placeholder={item.placeholder} />
                       </Form.Item>
                     </Col>
                     <Col span={11} offset={1}>
@@ -114,9 +143,17 @@ const DesignBodyRight: FC<IDesignBodyRightProps> = ({
     )
   }
 
+  useEffect(() => {
+    setKey('2')
+  }, [currentWidgetId])
+
   return (
     <div className='app-screen-disign__body--right'>
-      <Tabs className='custom-tabs' defaultActiveKey="1" destroyInactiveTabPane>
+      <Tabs
+        className='custom-tabs'
+        activeKey={key}
+        onChange={key => setKey(key)}
+        destroyInactiveTabPane>
         <TabPane tab="图层" key="5">
           Content of Tab Pane 4
         </TabPane>
@@ -137,28 +174,59 @@ const DesignBodyRight: FC<IDesignBodyRightProps> = ({
             </Form>
           </div>
         </TabPane>
-        <TabPane tab="配置" key="2">
-          Content of Tab Pane 2
-        </TabPane>
-        <TabPane tab="数据" key="3">
-          Content of Tab Pane 3
-        </TabPane>
-        <TabPane tab="坐标" key="4">
-          <div className='body'>
-            <Form
-              form={dynamicForm}
-              labelCol={{ span: 6 }}
-              wrapperCol={{ span: 18 }}
-              autoComplete="off"
-              labelAlign="left"
-              onValuesChange={(changedValues, allValues) => console.log(allValues)}
-            >
-              {
-                renderDynamicForm(coordinateConfigure.configure, dynamicForm)
-              }
-            </Form>
-          </div>
-        </TabPane>
+        {
+          currentWidgetId && <>
+            <TabPane tab="配置" key="2">
+              <div className='body'>
+                <Form
+                  form={configureForm}
+                  labelCol={{ span: 6 }}
+                  wrapperCol={{ span: 18 }}
+                  autoComplete="off"
+                  labelAlign="left"
+                  initialValues={currentWidget.options.configureValue}
+                  onValuesChange={(changedValues, allValues) => modifyLargeScreenElement(currentWidgetId, {
+                    ...currentWidget,
+                    options: {
+                      ...currentWidget.options,
+                      configureValue: allValues
+                    }
+                  })}
+                >
+                  {
+                    renderDynamicForm(currentWidget.options.configure, configureForm)
+                  }
+                </Form>
+              </div>
+            </TabPane>
+            <TabPane tab="数据" key="3">
+              Content of Tab Pane 3
+            </TabPane>
+            <TabPane tab="坐标" key="4">
+              <div className='body'>
+                <Form
+                  form={dynamicForm}
+                  labelCol={{ span: 6 }}
+                  wrapperCol={{ span: 18 }}
+                  autoComplete="off"
+                  labelAlign="left"
+                  initialValues={currentWidget.options.coordinateValue}
+                  onValuesChange={(changedValues, allValues) => modifyLargeScreenElement(currentWidgetId, {
+                    ...currentWidget,
+                    options: {
+                      ...currentWidget.options,
+                      coordinateValue: allValues
+                    }
+                  })}
+                >
+                  {
+                    renderDynamicForm(coordinateConfigure.configure, dynamicForm)
+                  }
+                </Form>
+              </div>
+            </TabPane>
+          </>
+        }
       </Tabs>
     </div>
   )

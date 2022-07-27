@@ -1,7 +1,7 @@
 import React, {
   FC
 } from 'react'
-import { Tooltip } from 'antd'
+import { message, Tooltip } from 'antd'
 import {
   SaveOutlined,
   EyeOutlined,
@@ -13,26 +13,54 @@ import {
   ArrowRightOutlined,
   ArrowLeftOutlined
 } from '@ant-design/icons'
+// 配置文件
+import { widgetConfigure } from '@src/widget/tools'
 // 获取组件分类
-import { componentsClassify } from '@src/elements'
+import { componentsClassify } from '@src/widget'
+import { guid } from '@src/utils/tools'
 import './index.scss'
 
 interface IDesignHeaderProps {
   drawer: any;
-  setDrawer: React.Dispatch<any>
+  setDrawer: React.Dispatch<any>;
+  addLargeScreenElement: (data: any) => void;
+  currentPageId?: string;
 }
 
 const DesignHeader: FC<IDesignHeaderProps> = ({
   drawer,
-  setDrawer
+  setDrawer,
+  addLargeScreenElement,
+  currentPageId
 }) => {
+  // 向页面添加组件
+  const addElement = (code: string) => {
+    if (!currentPageId) {
+      message.error('请先添加页面哦')
+      return
+    }
+    const index = widgetConfigure.findIndex(item => item.code === code)
+    if (index !== -1) {
+      addLargeScreenElement({
+        id: guid(),
+        ...widgetConfigure[index]
+      })
+    }
+  }
+
   return (
     <div className='app-screen-disign__header'>
       {/* elements start */}
       <ul className="app-screen-disign__header--left">
         {
           componentsClassify.map((item: any, index: number) => (
-            <li key={item.type}>
+            <li
+              onClick={() => {
+                if (item.widgetName) {
+                  addElement(item.widgetName)
+                }
+              }}
+              key={item.type}>
               {item.icon}
               <p>{item.name}</p>
               {

@@ -4,6 +4,10 @@
             width: 300px;
             background-color: #535353;
             border-left: 1px solid rgba(0, 0, 0, .8);
+            textarea::placeholder,
+            input::placeholder {
+                color: rgba(255, 255, 255, .1)
+            }
             .body {
                 padding: 0 10px;
             }
@@ -39,6 +43,7 @@
             .ant-form-item-label>label {
                 color: rgba(255, 255, 255, .5);
             }
+            .ant-select-selector,
             .ant-input-affix-wrapper,
             .ant-input,
             .ant-input-number {

@@ -81,11 +81,29 @@ export type UPDATE_CURRENT_TABKEY_TYPE = typeof UPDATE_CURRENT_TABKEY;
 export const STRATEGY = 'STRATEGY';
 export type STRATEGY_TYPE = typeof STRATEGY;
 
+// 组件
+export interface IWidget {
+	// 组件code
+	code: string;
+	// 组件类型
+	type: string;
+	// 组件ID
+	id: string;
+	options: {
+		// 配置项值
+		configureValue: any;
+		// 基础配置项
+		configure: any[];
+		// 坐标值
+		coordinateValue: any;
+	};
+}
+
 // 页面接口
 export interface IPage {
-	id?: string;
-	name?: string;
-	elements?: any[];
+	id: string;
+	name: string;
+	widgets: IWidget[];
 }
 
 export interface IScreen {
@@ -112,6 +130,8 @@ export type LARGESCREEN_STATE = {
 	currentPage: IPage;
 	// 选中组件ID
 	currentWidgetId: string;
+	// 选中的组件
+	currentWidget: IWidget;
 	screen: IScreen;
 };
 // 获取大屏数据

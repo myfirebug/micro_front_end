@@ -22,7 +22,8 @@ import {
 	REDO_LARGESCREEN,
 	REDO_LARGESCREEN_TYPE,
 	IPage,
-	IScreen
+	IScreen,
+	IWidget
 } from '../actionType';
 import { Dispatch } from 'redux';
 
@@ -65,7 +66,7 @@ export interface IChangeLargeScreenPageAction {
 // 添加元素
 export interface IAddLargeScreenElementAction {
 	type: ADD_LARGESCREEN_ELEMENT_TYPE;
-	data: IPage;
+	data: IWidget;
 }
 
 // 删除元素
@@ -78,6 +79,7 @@ export interface IDelLargeScreenElementAction {
 export interface IModifyLargeScreenElementAction {
 	type: MODIFY_LARGESCREEN_ELEMENT_TYPE;
 	id: string;
+	data: IWidget;
 }
 
 // 撤销
@@ -142,7 +144,7 @@ const actionChangeLargeScreenPage = (
 
 // 新增元素数据的方法
 const actionAddLargeScreenElement = (
-	data: IPage
+	data: IWidget
 ): IAddLargeScreenElementAction => ({
 	type: ADD_LARGESCREEN_ELEMENT,
 	data
@@ -158,10 +160,12 @@ const actionDelLargeScreenElement = (
 
 // 修改元素数据的方法
 const actionModifyLargeScreenElement = (
-	id: string
+	id: string,
+	data: IWidget
 ): IModifyLargeScreenElementAction => ({
 	type: MODIFY_LARGESCREEN_ELEMENT,
-	id
+	id,
+	data
 });
 
 // 撤销元素数据的方法
@@ -214,9 +218,10 @@ export const changeLargeScreenPage =
 	};
 
 // 新增元素数据
-export const addLargeScreenElement = (data: IPage) => (dispatch: Dispatch) => {
-	dispatch(actionAddLargeScreenElement(data));
-};
+export const addLargeScreenElement =
+	(data: IWidget) => (dispatch: Dispatch) => {
+		dispatch(actionAddLargeScreenElement(data));
+	};
 
 // 删除元素数据
 export const delLargeScreenElement = (id: string) => (dispatch: Dispatch) => {
@@ -225,8 +230,9 @@ export const delLargeScreenElement = (id: string) => (dispatch: Dispatch) => {
 
 // 修改元素数据
 export const modifyLargeScreenElement =
-	(id: string) => (dispatch: Dispatch) => {
-		dispatch(actionModifyLargeScreenElement(id));
+	(id: string, data: IWidget, callback?: Function) => (dispatch: Dispatch) => {
+		dispatch(actionModifyLargeScreenElement(id, data));
+		callback && callback();
 	};
 
 // 撤销元素数据

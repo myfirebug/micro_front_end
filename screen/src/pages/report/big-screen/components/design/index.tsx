@@ -4,7 +4,7 @@ import React, {
   useState,
   useRef
 } from 'react'
-import { ALL_STATE, IPage, IScreen } from '@store/actionType'
+import { ALL_STATE, IPage, IScreen, IWidget } from '@store/actionType'
 import { connect } from 'react-redux'
 import {
   getLargeScreenPages,
@@ -28,7 +28,7 @@ import DesignBodyLeft from './components/left'
 // 主题右边
 import DesignBodyRight from './components/right'
 // 所有组件地址
-import components from '@src/elements'
+import components from '@src/widget'
 // 尺子
 import Ruler from './components/ruler'
 
@@ -44,7 +44,11 @@ interface IDisignProps {
   delLargeScreenPage: (id: string, callback?: Function) => void;
   modifyLargeScreenPage: (id: string, data: IPage, callback?: Function) => void;
   changeLargeScreenPage: (id: string, callback?: Function) => void;
+  addLargeScreenElement: (data: any) => void;
+  modifyLargeScreenElement: (id: string, data: IWidget, callback?: Function) => void;
   currentPage: IPage;
+  currentWidgetId: string;
+  currentWidget: IWidget;
 }
 
 const Disign: FC<IDisignProps> = ({
@@ -57,7 +61,11 @@ const Disign: FC<IDisignProps> = ({
   delLargeScreenPage,
   modifyLargeScreenPage,
   changeLargeScreenPage,
-  currentPage
+  addLargeScreenElement,
+  currentPage,
+  currentWidgetId,
+  currentWidget,
+  modifyLargeScreenElement
 }) => {
 
   // 获取装组件的盒子，这里需要获取他的宽度
@@ -65,8 +73,6 @@ const Disign: FC<IDisignProps> = ({
   const [elementsWrapperAttr, setElementsWrapperAttr] = useState<any>({})
   // 获取放大缩小比例
   const [cale, setCale] = useState(0)
-
-  const [eles, setEles] = useState([])
 
   // 这里主要设置默认的缩放比例
   useEffect(() => {
@@ -89,12 +95,14 @@ const Disign: FC<IDisignProps> = ({
     }
   }, [elementsWrapper.current])
 
-  console.log(elementsWrapperAttr.width, Number(screen.width))
-
   return (
     <div className='app-screen-disign'>
       {/* 头部 */}
-      <DesignHeader drawer={drawer} setDrawer={setDrawer} />
+      <DesignHeader
+        addLargeScreenElement={addLargeScreenElement}
+        drawer={drawer}
+        currentPageId={currentPage.id}
+        setDrawer={setDrawer} />
       {/* 内容区 */}
       <div className='app-screen-disign__body'>
         {/* 左边 */}
@@ -150,16 +158,20 @@ const Disign: FC<IDisignProps> = ({
                 transformOrigin: '0 0'
               }}>
               {
-                eles.map((item: any, index: number) => {
-                  if (components[item.components]) {
-                    const Widget = components[item.components]
-                    return (
-                      <div className='app-widget__wrap' key={index}>
-                        <Widget />
-                      </div>
-                    )
-                  }
-                })
+                currentPage && currentPage.widgets ?
+                  currentPage.widgets.map((item: any, index: number) => {
+                    const Widget = components[item.code]
+                    if (Widget) {
+                      return (
+                        <div className='app-widget__wrap' key={index}>
+                          <Widget text={item.options.configureValue.elementValue} style={{
+                            ...item.options.configureValue,
+                            ...item.options.coordinateValue
+                          }} />
+                        </div>
+                      )
+                    }
+                  }) : null
               }
             </div>
           </div>
@@ -167,7 +179,12 @@ const Disign: FC<IDisignProps> = ({
         {/* 右边 */}
         {
           pages.length &&
-          <DesignBodyRight screen={screen} modifyScreen={modifyScreen} />
+          <DesignBodyRight
+            screen={screen}
+            modifyLargeScreenElement={modifyLargeScreenElement}
+            modifyScreen={modifyScreen}
+            currentWidget={currentWidget}
+            currentWidgetId={currentWidgetId} />
         }
       </div>
     </div>
@@ -179,7 +196,8 @@ const mapStateToProps = (state: ALL_STATE) => ({
   pages: state.largeScreen.pages,
   currentPage: state.largeScreen.currentPage,
   currentWidgetId: state.largeScreen.currentWidgetId,
-  screen: state.largeScreen.screen
+  screen: state.largeScreen.screen,
+  currentWidget: state.largeScreen.currentWidget
 });
 
 // 将 对应action 插入到组件的 props 中

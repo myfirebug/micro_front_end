@@ -17,7 +17,7 @@ const Text: FC<ITextProps> = ({
   ...rest
 }) => {
   return (
-    <div className={`app-widget app-widget__text ${className || ''}`} {...rest}>{text}</div>
+    <div className={`app-element app-element__text ${className || ''}`} {...rest}>{text}</div>
   )
 }
 export default Text

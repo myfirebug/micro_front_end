@@ -3,10 +3,10 @@
  * @Author: hejp
  * @Date: 2022-07-26 10:29:48
  * @Last Modified by: hejp
- * @Last Modified time: 2022-07-26 10:37:13
+ * @Last Modified time: 2022-07-27 17:24:12
  */
 
 // 文本框配置
-import widgetText from './widget-text';
+import text from './widget/text';
 
-export const widgetConfigure = [widgetText];
+export const widgetConfigure = [text];

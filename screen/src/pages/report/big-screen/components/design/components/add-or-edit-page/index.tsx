@@ -48,7 +48,7 @@ const AddOrEditPage: FC<IAddOrEditPageProps> = ({
     const params = {
       ...values,
       id: details.id || guid(),
-      elements: details.elements || []
+      widgets: details.widgets || []
     }
     // 编辑
     if (details.id) {

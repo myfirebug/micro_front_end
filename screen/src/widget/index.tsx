@@ -12,7 +12,7 @@ import {
 import './index.scss'
 
 // 组件分类
-export const componentsClassify = [{
+export const componentsClassify: any[] = [{
   type: 'text',
   icon: <FontSizeOutlined />,
   name: '文本',
@@ -21,42 +21,50 @@ export const componentsClassify = [{
 {
   type: 'image',
   icon: <FileImageOutlined />,
-  name: '图片'
+  name: '图片',
+  widgetName: 'widget-image'
 },
 {
   type: 'link',
   icon: <LinkOutlined />,
-  name: '链接'
+  name: '链接',
+  widgetName: 'widget-link'
 },
 {
   type: 'date',
   icon: <ClockCircleOutlined />,
-  name: '当前时间'
+  name: '当前时间',
+  widgetName: 'widget-date'
 },
 {
   type: 'table',
   icon: <TableOutlined />,
-  name: '表格'
+  name: '表格',
+  widgetName: 'widget-table'
 },
 {
   type: 'line',
   icon: <LineChartOutlined />,
-  name: '折线图'
+  name: '折线图',
+  datas: []
 },
 {
   type: 'bar',
   icon: <BarChartOutlined />,
-  name: '柱状图'
+  name: '柱状图',
+  datas: []
 },
 {
   type: 'pie',
   icon: <PieChartOutlined />,
-  name: '饼图'
+  name: '饼图',
+  datas: []
 },
 {
   type: 'radar',
   icon: <RadarChartOutlined />,
-  name: '雷达图'
+  name: '雷达图',
+  datas: []
 }]
 
 // 所有组件地址

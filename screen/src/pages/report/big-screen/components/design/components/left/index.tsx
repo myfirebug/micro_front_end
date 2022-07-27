@@ -81,11 +81,6 @@ const DesignBodyLeft: FC<IDesignBodyLeftProps> = ({
           details={modal.details}
         />
       </Modal>
-      {/* 右键显示的页面菜单功能 */}
-      <ul className="contextmenu">
-        <li className='contextmenu-item'>编辑</li>
-        <li className='contextmenu-item'>删除</li>
-      </ul>
       <div className='body'>
         <Button
           type="primary"

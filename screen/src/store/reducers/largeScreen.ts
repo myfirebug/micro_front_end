@@ -11,7 +11,9 @@ import {
 	UNDO_LARGESCREEN,
 	REDO_LARGESCREEN,
 	LARGESCREEN_STATE,
-	MODIFY_SCREEN
+	MODIFY_SCREEN,
+	IPage,
+	IWidget
 } from '../actionType';
 
 // 处理并返回 state
@@ -19,8 +21,9 @@ const initialState = {
 	pages: [],
 	pastPage: [],
 	futurePage: [],
-	currentPage: {},
+	currentPage: {} as IPage,
 	currentWidgetId: '',
+	currentWidget: {} as IWidget,
 	screen: {
 		width: 1920,
 		height: 1080,
@@ -95,12 +98,35 @@ export const largeScreen = (
 				currentWidgetId: ''
 			};
 		}
-		case ADD_LARGESCREEN_ELEMENT:
-			return state;
+		case ADD_LARGESCREEN_ELEMENT: {
+			const currentPage: IPage = { ...state.currentPage };
+			currentPage.widgets = currentPage.widgets
+				? [...currentPage.widgets, action.data]
+				: [];
+			return {
+				...state,
+				currentPage: currentPage,
+				currentWidgetId: action.data.id,
+				currentWidget: action.data
+			};
+		}
+
 		case DEL_LARGESCREEN_ELEMENT:
 			return state;
-		case MODIFY_LARGESCREEN_ELEMENT:
-			return state;
+		case MODIFY_LARGESCREEN_ELEMENT: {
+			const currentPage: IPage = { ...state.currentPage };
+			currentPage.widgets = currentPage.widgets.map((item) => {
+				if (item.id === action.id) {
+					return action.data;
+				}
+				return item;
+			});
+			return {
+				...state,
+				currentPage: currentPage,
+				currentWidget: action.data
+			};
+		}
 		case UNDO_LARGESCREEN:
 			return state;
 		case REDO_LARGESCREEN:
