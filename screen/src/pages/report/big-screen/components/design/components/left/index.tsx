@@ -1,8 +1,8 @@
 import {
-  FC, useState
+  FC, useEffect, useRef, useState
 } from 'react'
 import './index.scss'
-import { Button, Modal } from 'antd'
+import { Button, message, Modal } from 'antd'
 import { PlusOutlined } from '@ant-design/icons'
 import { IPage } from '@src/store/actionType'
 
@@ -14,14 +14,28 @@ interface IDesignBodyLeftProps {
   addLargeScreenPage: (data: IPage, callback?: Function) => void;
   delLargeScreenPage: (id: string, callback?: Function) => void;
   modifyLargeScreenPage: (id: string, data: IPage, callback?: Function) => void;
+  changeLargeScreenPage: (id: string, callback?: Function) => void;
+  currentPageId?: string;
 }
 
 const DesignBodyLeft: FC<IDesignBodyLeftProps> = ({
   pages,
   addLargeScreenPage,
   delLargeScreenPage,
-  modifyLargeScreenPage
+  modifyLargeScreenPage,
+  changeLargeScreenPage,
+  currentPageId
 }) => {
+
+  const pageMenu = useRef<any>(null)
+
+  useEffect(() => {
+    const contextmenuHander = (e: Event) => {
+      e.preventDefault()
+      console.log(e)
+    }
+    pageMenu.current?.addEventListener('contextmenu', contextmenuHander)
+  }, [pageMenu.current])
 
   // 弹窗参数
   const [modal, setModal] = useState<any>({
@@ -63,12 +77,21 @@ const DesignBodyLeft: FC<IDesignBodyLeftProps> = ({
         </Button>
       </div>
       <div className="header">页面列表</div>
-      <ul className="page">
+      <ul className="page" ref={pageMenu}>
         {
           pages.map(item => (
             <li
               key={item.id}
-              className="page-item">{item.name}</li>
+              onClick={() => {
+                if (item.id !== currentPageId) {
+                  changeLargeScreenPage(item.id as string, () => {
+                    message.success('页面切换成功')
+                  })
+                }
+              }}
+              className={`page-item ${item.id === currentPageId ? 'is-active' : ''}`}>
+              {item.name}
+            </li>
           ))
         }
       </ul>

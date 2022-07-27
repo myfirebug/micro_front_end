@@ -17,6 +17,24 @@
             .body {
                 padding: 10px;
             }
+            .page-item {
+                padding: 0 10px;
+                @include single();
+                cursor: pointer;
+                line-height: 40px;
+                color: rgba(255, 255, 255, .6);
+                border-bottom: 1px solid #383838;
+                border-right: 5px solid transparent;
+                transition: all .25s ease 0s;
+                &:hover {
+                    color: #fff;
+                }
+                @include when(active) {
+                    font-weight: bold;
+                    color: #fff;
+                    border-right-color: #1890ff;
+                }
+            }
         }
     }
 }

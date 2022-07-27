@@ -16,7 +16,8 @@ import {
   modifyLargeScreenElement,
   undoLargeScreen,
   redoLargeScreen,
-  modifyScreen
+  modifyScreen,
+  changeLargeScreenPage
 } from '@store/actions/largeScreen'
 
 
@@ -42,6 +43,8 @@ interface IDisignProps {
   addLargeScreenPage: (data: IPage, callback?: Function) => void;
   delLargeScreenPage: (id: string, callback?: Function) => void;
   modifyLargeScreenPage: (id: string, data: IPage, callback?: Function) => void;
+  changeLargeScreenPage: (id: string, callback?: Function) => void;
+  currentPage: IPage;
 }
 
 const Disign: FC<IDisignProps> = ({
@@ -52,7 +55,9 @@ const Disign: FC<IDisignProps> = ({
   pages,
   addLargeScreenPage,
   delLargeScreenPage,
-  modifyLargeScreenPage
+  modifyLargeScreenPage,
+  changeLargeScreenPage,
+  currentPage
 }) => {
 
   // 获取装组件的盒子，这里需要获取他的宽度
@@ -98,6 +103,8 @@ const Disign: FC<IDisignProps> = ({
           addLargeScreenPage={addLargeScreenPage}
           delLargeScreenPage={delLargeScreenPage}
           modifyLargeScreenPage={modifyLargeScreenPage}
+          currentPageId={currentPage.id}
+          changeLargeScreenPage={changeLargeScreenPage}
         />
         <div className='app-screen-disign__body--center'>
           <Ruler />
@@ -186,7 +193,8 @@ const mapDispatchToProps = {
   modifyLargeScreenElement,
   undoLargeScreen,
   redoLargeScreen,
-  modifyScreen
+  modifyScreen,
+  changeLargeScreenPage
 };
 
 
