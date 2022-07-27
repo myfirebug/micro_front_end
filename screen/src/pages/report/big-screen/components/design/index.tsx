@@ -1,6 +1,24 @@
 import React, {
-  FC, useState
+  FC,
+  useEffect,
+  useState,
+  useRef
 } from 'react'
+import { ALL_STATE, IPage, IScreen } from '@store/actionType'
+import { connect } from 'react-redux'
+import {
+  getLargeScreenPages,
+  addLargeScreenPage,
+  delLargeScreenPage,
+  modifyLargeScreenPage,
+  addLargeScreenElement,
+  delLargeScreenElement,
+  modifyLargeScreenElement,
+  undoLargeScreen,
+  redoLargeScreen,
+  modifyScreen
+} from '@store/actions/largeScreen'
+
 
 // 头部
 import DesignHeader from './components/header'
@@ -14,17 +32,55 @@ import components from '@src/elements'
 import Ruler from './components/ruler'
 
 import './index.scss'
+
 interface IDisignProps {
   drawer: any;
-  setDrawer: React.Dispatch<any>
+  setDrawer: React.Dispatch<any>;
+  modifyScreen: (datas: any) => void;
+  screen: IScreen;
+  pages: IPage[];
+  addLargeScreenPage: (data: IPage) => void;
+  delLargeScreenPage: (id: string) => void;
 }
 
 const Disign: FC<IDisignProps> = ({
   drawer,
-  setDrawer
+  setDrawer,
+  modifyScreen,
+  screen,
+  pages
 }) => {
 
+  // 获取装组件的盒子，这里需要获取他的宽度
+  const elementsWrapper = useRef<HTMLDivElement>(null)
+  const [elementsWrapperAttr, setElementsWrapperAttr] = useState<any>({})
+  // 获取放大缩小比例
+  const [cale, setCale] = useState(0)
+
   const [eles, setEles] = useState([])
+
+  // 这里主要设置默认的缩放比例
+  useEffect(() => {
+    if (elementsWrapperAttr.width && screen.width) {
+      setCale(Number((elementsWrapperAttr.width / Number(screen.width)).toFixed(4)))
+    }
+  }, [screen.width, elementsWrapperAttr.width])
+
+  // 获取elementsWrapper的宽度
+  useEffect(() => {
+    const resizeHander = () => {
+      setElementsWrapperAttr({
+        width: elementsWrapper.current?.offsetWidth
+      })
+    }
+    resizeHander()
+    window.addEventListener('resize', resizeHander)
+    return () => {
+      window.removeEventListener('resize', resizeHander)
+    }
+  }, [elementsWrapper.current])
+
+  console.log(elementsWrapperAttr.width, Number(screen.width))
 
   return (
     <div className='app-screen-disign'>
@@ -33,55 +89,100 @@ const Disign: FC<IDisignProps> = ({
       {/* 内容区 */}
       <div className='app-screen-disign__body'>
         {/* 左边 */}
-        <DesignBodyLeft />
+        <DesignBodyLeft
+          pages={pages}
+          addLargeScreenPage={addLargeScreenPage}
+          delLargeScreenPage={delLargeScreenPage}
+        />
         <div className='app-screen-disign__body--center'>
           <Ruler />
-          <div>
-            {
-              eles.map((item: any, index: number) => {
-                if (components[item.components]) {
-                  const Widget = components[item.components]
-                  return (
-                    <div className='app-widget__wrap' key={index}>
-                      <Widget />
-                    </div>
-                  )
-                }
-              })
-            }
-
+          <div className="elements-wrapper" ref={elementsWrapper}>
+            <div
+              className="grid">
+              <svg xmlns="http://www.w3.org/2000/svg"
+                xmlnsXlink="http://www.w3.org/1999/xlink"
+                width="100%"
+                height="100%"
+                id="canvas">
+                <defs>
+                  <pattern
+                    patternUnits="userSpaceOnUse"
+                    id="p1"
+                    x="0"
+                    y="0"
+                    width="10"
+                    height="10"
+                  >
+                    <rect
+                      x="0"
+                      y="0"
+                      stroke="rgba(0,0,0,.8)"
+                      fill="none"
+                      width="10.5"
+                      height="10.5"
+                    ></rect>
+                  </pattern>
+                </defs>
+                <rect id="wrapper" x="0" y="0" fill="url(#p1)" width="100%" height="100%"></rect>
+              </svg>
+            </div>
+            <div
+              style={{
+                position: 'relative',
+                zIndex: 1,
+                width: screen.width,
+                height: screen.height,
+                backgroundColor: screen.backgroundColor,
+                overflow: 'hidden',
+                transform: `scale(${cale})`,
+                transformOrigin: '0 0'
+              }}>
+              {
+                eles.map((item: any, index: number) => {
+                  if (components[item.components]) {
+                    const Widget = components[item.components]
+                    return (
+                      <div className='app-widget__wrap' key={index}>
+                        <Widget />
+                      </div>
+                    )
+                  }
+                })
+              }
+            </div>
           </div>
-          <svg xmlns="http://www.w3.org/2000/svg"
-            xmlnsXlink="http://www.w3.org/1999/xlink"
-            width="100%"
-            height="100%"
-            id="canvas">
-            <defs>
-              <pattern
-                patternUnits="userSpaceOnUse"
-                id="p1"
-                x="0"
-                y="0"
-                width="10"
-                height="10"
-              >
-                <rect
-                  x="0"
-                  y="0"
-                  stroke="rgba(0,0,0,.8)"
-                  fill="none"
-                  width="10.5"
-                  height="10.5"
-                ></rect>
-              </pattern>
-            </defs>
-            <rect id="wrapper" x="0" y="0" fill="url(#p1)" width="100%" height="100%"></rect>
-          </svg>
         </div>
         {/* 右边 */}
-        <DesignBodyRight />
+        <DesignBodyRight screen={screen} modifyScreen={modifyScreen} />
       </div>
     </div>
   )
 }
-export default Disign
+
+// 对应的statemkjh m,
+const mapStateToProps = (state: ALL_STATE) => ({
+  pages: state.largeScreen.pages,
+  currentPage: state.largeScreen.currentPage,
+  currentWidgetId: state.largeScreen.currentWidgetId,
+  screen: state.largeScreen.screen
+});
+
+// 将 对应action 插入到组件的 props 中
+const mapDispatchToProps = {
+  getLargeScreenPages,
+  addLargeScreenPage,
+  delLargeScreenPage,
+  modifyLargeScreenPage,
+  addLargeScreenElement,
+  delLargeScreenElement,
+  modifyLargeScreenElement,
+  undoLargeScreen,
+  redoLargeScreen,
+  modifyScreen
+};
+
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Disign)

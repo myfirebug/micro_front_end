@@ -3,9 +3,7 @@ import {
 	USERINFO,
 	USERINFO_TYPE,
 	UPDATE_USERINFO,
-	UPDATE_USERINFO_TYPE,
-	CLEAR_USERINFO,
-	CLEAR_USERINFO_TYPE
+	UPDATE_USERINFO_TYPE
 } from '../actionType';
 import { Dispatch } from 'redux';
 import { IAnyObject } from '@src/types';
@@ -21,15 +19,8 @@ export interface IUpdateUserInfoAction {
 	type: UPDATE_USERINFO_TYPE;
 	data: IAnyObject;
 }
-// 修改用户信息的接口类型
-export interface IClearUserInfoAction {
-	type: CLEAR_USERINFO_TYPE;
-}
 // 定义 ModifyAction 类型
-export type ModifyAction =
-	| IUserInfoAction
-	| IUpdateUserInfoAction
-	| IClearUserInfoAction;
+export type ModifyAction = IUserInfoAction | IUpdateUserInfoAction;
 
 // 获取用户信息action
 const actionUserInfo = (data: USERINFO_STATE): IUserInfoAction => ({

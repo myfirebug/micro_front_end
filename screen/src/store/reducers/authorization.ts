@@ -4,7 +4,6 @@ import {
 	IAuthorization,
 	MENU,
 	STRATEGY,
-	CLEAR_AUTHORIZATION,
 	UPDATE_CURRENT_TABKEY
 } from '../actionType';
 import { IAnyObject } from '@src/types';
@@ -61,8 +60,6 @@ export const authorization = (
 				strategy: strategy
 			};
 		}
-		case CLEAR_AUTHORIZATION:
-			return initialState;
 		default:
 			return state;
 	}

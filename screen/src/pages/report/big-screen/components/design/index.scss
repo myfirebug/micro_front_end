@@ -2,12 +2,28 @@
     user-select: none;
     @include e(body) {
         display: flex;
-        height: calc(100vh - 50px);
+        height: calc(100vh - 51px);
         @include m(center) {
             position: relative;
             flex: 1;
             padding: 16px 0 0 16px;
             background-color: #282828;
+            overflow: hidden;
+            .elements-wrapper {
+                position: relative;
+                width: 100%;
+                height: 100%;
+                overflow: hidden;
+                box-sizing: border-box;
+                background-color: #282828;
+            }
+            .grid {
+                position: absolute;
+                left: 0;
+                top: 0;
+                right: 0;
+                bottom: 0;
+            }
         }
     }
 }

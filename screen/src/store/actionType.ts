@@ -26,9 +26,6 @@ export type USERINFO_STATE = IUserInfo;
 // 获取用户信息
 export const USERINFO = 'USERINFO';
 export type USERINFO_TYPE = typeof USERINFO;
-// 清空用户信息
-export const CLEAR_USERINFO = 'CLEAR_USERINFO';
-export type CLEAR_USERINFO_TYPE = typeof CLEAR_USERINFO;
 // 编辑用户信息
 export const UPDATE_USERINFO = 'UPDATE_USERINFO';
 export type UPDATE_USERINFO_TYPE = typeof UPDATE_USERINFO;
@@ -45,6 +42,7 @@ export interface IMenu {
 }
 export type MENU_STATE = IMenu[];
 
+// 面包屑
 export interface IBreadCrumbsItem {
 	path: string;
 	name: string;
@@ -83,19 +81,76 @@ export type UPDATE_CURRENT_TABKEY_TYPE = typeof UPDATE_CURRENT_TABKEY;
 export const STRATEGY = 'STRATEGY';
 export type STRATEGY_TYPE = typeof STRATEGY;
 
-// 清除authorization数据
-export const CLEAR_AUTHORIZATION = 'CLEAR_AUTHORIZATION';
-export type CLEAR_AUTHORIZATION_TYPE = typeof CLEAR_AUTHORIZATION;
-
-export interface IAictionary {
-	residences: any;
+// 页面接口
+export interface IPage {
+	id?: string;
+	name?: string;
+	elements?: any[];
 }
+
+export interface IScreen {
+	width: number | string;
+	height: number | string;
+	title: string;
+	description: string;
+	backgroundColor: string;
+}
+/**
+ * 所有页面
+ * 注意：
+ * 1.当前切换页面时，pastPage, futurePage重置[], currentPage的数据等于当前选中的页面的数据，currentWidgetId需要重置
+ * 2.只有当前页面才会有撤销和恢复
+ */
+export type LARGESCREEN_STATE = {
+	// 当前项目所有页面
+	pages: IPage[];
+	// 撤销
+	pastPage: IPage[];
+	// 恢复
+	futurePage: IPage[];
+	// 当前页面
+	currentPage: IPage;
+	// 选中组件ID
+	currentWidgetId: string;
+	screen: IScreen;
+};
+// 获取大屏数据
+export const LARGE_SCREEN = 'LARGE_SCREEN';
+export type LARGE_SCREEN_TYPE = typeof LARGE_SCREEN;
+// 修改屏幕数据
+export const MODIFY_SCREEN = 'MODIFY_SCREEN';
+export type MODIFY_SCREEN_TYPE = typeof MODIFY_SCREEN;
+// 添加页面
+export const ADD_LARGESCREEN_PAGE = 'ADD_LARGESCREEN_PAGE';
+export type ADD_LARGESCREEN_PAGE_TYPE = typeof ADD_LARGESCREEN_PAGE;
+// 删除页面
+export const DEL_LARGESCREEN_PAGE = 'DEL_LARGESCREEN_PAGE';
+export type DEL_LARGESCREEN_PAGE_TYPE = typeof DEL_LARGESCREEN_PAGE;
+// 修改页面
+export const MODIFY_LARGESCREEN_PAGE = 'MODIFY_LARGESCREEN_PAGE';
+export type MODIFY_LARGESCREEN_PAGE_TYPE = typeof MODIFY_LARGESCREEN_PAGE;
+// 添加widget
+export const ADD_LARGESCREEN_ELEMENT = 'ADD_LARGESCREEN_ELEMENT';
+export type ADD_LARGESCREEN_ELEMENT_TYPE = typeof ADD_LARGESCREEN_ELEMENT;
+// 删除widget
+export const DEL_LARGESCREEN_ELEMENT = 'DEL_LARGESCREEN_ELEMENT';
+export type DEL_LARGESCREEN_ELEMENT_TYPE = typeof DEL_LARGESCREEN_ELEMENT;
+// 修改widget
+export const MODIFY_LARGESCREEN_ELEMENT = 'MODIFY_LARGESCREEN_ELEMENT';
+export type MODIFY_LARGESCREEN_ELEMENT_TYPE = typeof MODIFY_LARGESCREEN_ELEMENT;
+// 撤销
+export const UNDO_LARGESCREEN = 'UNDO_LARGESCREEN';
+export type UNDO_LARGESCREEN_TYPE = typeof UNDO_LARGESCREEN;
+// 恢复
+export const REDO_LARGESCREEN = 'REDO_LARGESCREEN';
+export type REDO_LARGESCREEN_TYPE = typeof REDO_LARGESCREEN;
+
 // 所有的数据的数据类型, 注意这里每加一个state模块都必须在这里进行申明
 export type ALL_STATE = {
 	counter: COUNTER_STATE;
-	dictionary: IAictionary;
 	authorization: IAuthorization;
 	userInfo: IUserInfo;
+	largeScreen: LARGESCREEN_STATE;
 };
 
 // 定义省市区

@@ -5,14 +5,20 @@ import './index.scss'
 import { Tabs, Form, Input, InputNumber, FormInstance, Row, Col } from 'antd'
 import { widgetConfigure, pageConfigure, coordinateConfigure } from '@src/elements/tools'
 import { SketchPicker } from 'react-color'
-import { relative } from 'path'
+import { IScreen } from '@src/store/actionType'
 
 const { TextArea } = Input
 const { TabPane } = Tabs
 
-interface IDesignBodyRightProps { }
+interface IDesignBodyRightProps {
+  screen: IScreen;
+  modifyScreen: (datas: any) => void;
+}
 
-const DesignBodyRight: FC<IDesignBodyRightProps> = () => {
+const DesignBodyRight: FC<IDesignBodyRightProps> = ({
+  screen,
+  modifyScreen
+}) => {
   // 页面from
   const [pageForm] = Form.useForm()
   // 坐标from
@@ -22,7 +28,7 @@ const DesignBodyRight: FC<IDesignBodyRightProps> = () => {
    * @param datas 表格数据
    * @returns ReactNode
    */
-  const renderDynamicForm = (datas: any, form: FormInstance<any>) => {
+  const renderDynamicForm = (datas: any, form: FormInstance<any>, callback?: Function) => {
     return (
       <>
         {
@@ -34,7 +40,6 @@ const DesignBodyRight: FC<IDesignBodyRightProps> = () => {
                   label={item.label}
                   name={item.name}
                   rules={[{ required: item.require }]}
-                  initialValue={item.value}
                 >
                   <Input />
                 </Form.Item>
@@ -45,7 +50,6 @@ const DesignBodyRight: FC<IDesignBodyRightProps> = () => {
                   label={item.label}
                   name={item.name}
                   rules={[{ required: item.require }]}
-                  initialValue={item.value}
                 >
                   <InputNumber style={{ width: '100%' }} />
                 </Form.Item>
@@ -56,7 +60,6 @@ const DesignBodyRight: FC<IDesignBodyRightProps> = () => {
                   label={item.label}
                   name={item.name}
                   rules={[{ required: item.require }]}
-                  initialValue={item.value}
                 >
                   <TextArea rows={8} />
                 </Form.Item>
@@ -71,7 +74,6 @@ const DesignBodyRight: FC<IDesignBodyRightProps> = () => {
                         noStyle
                         name={item.name}
                         rules={[{ required: item.require }]}
-                        initialValue={item.value}
                       >
                         <Input allowClear />
                       </Form.Item>
@@ -85,11 +87,16 @@ const DesignBodyRight: FC<IDesignBodyRightProps> = () => {
                             }}>
                               获取颜色
                               <div className='color'>
-                                <SketchPicker color={item.value} onChange={e => {
-                                  form.setFieldsValue({
-                                    [item.name]: e.hex
-                                  })
-                                }} />
+                                <SketchPicker
+                                  color={form.getFieldValue(item.name)}
+                                  onChange={e => {
+                                    form.setFieldsValue({
+                                      [item.name]: e.hex
+                                    })
+                                    callback && callback({
+                                      [item.name]: e.hex
+                                    })
+                                  }} />
                               </div>
                             </div>
                           )
@@ -109,7 +116,6 @@ const DesignBodyRight: FC<IDesignBodyRightProps> = () => {
 
   return (
     <div className='app-screen-disign__body--right'>
-
       <Tabs className='custom-tabs' defaultActiveKey="1" destroyInactiveTabPane>
         <TabPane tab="图层" key="5">
           Content of Tab Pane 4
@@ -122,11 +128,11 @@ const DesignBodyRight: FC<IDesignBodyRightProps> = () => {
               wrapperCol={{ span: 18 }}
               autoComplete="off"
               labelAlign="left"
-              onValuesChange={(changedValues, allValues) => console.log(allValues)}
-              onChange={e => console.log(e)}
+              initialValues={screen}
+              onValuesChange={(changedValues, allValues) => modifyScreen(allValues)}
             >
               {
-                renderDynamicForm(pageConfigure.configure, pageForm)
+                renderDynamicForm(pageConfigure.configure, pageForm, modifyScreen)
               }
             </Form>
           </div>

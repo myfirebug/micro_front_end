@@ -4,7 +4,6 @@ import {
 	MENU_STATE,
 	STRATEGY,
 	STRATEGY_TYPE,
-	CLEAR_AUTHORIZATION_TYPE,
 	RESIDENCES,
 	UPDATE_CURRENT_TABKEY,
 	UPDATE_CURRENT_TABKEY_TYPE
@@ -32,16 +31,10 @@ export interface IUpdateCurrentTabKeyAction {
 	key: string;
 }
 
-// 清除authorization数据
-export interface IClearAction {
-	type: CLEAR_AUTHORIZATION_TYPE;
-}
-
 // 定义 ModifyMenuAction 类型
 export type ModifyMenuAction =
 	| IMenuAction
 	| IStrategyAction
-	| IClearAction
 	| IUpdateCurrentTabKeyAction;
 
 // 获取菜单action

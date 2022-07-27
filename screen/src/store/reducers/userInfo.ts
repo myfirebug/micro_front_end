@@ -1,10 +1,5 @@
 import { ModifyAction } from '../actions/userInfo';
-import {
-	USERINFO,
-	USERINFO_STATE,
-	UPDATE_USERINFO,
-	CLEAR_USERINFO
-} from '../actionType';
+import { USERINFO, USERINFO_STATE, UPDATE_USERINFO } from '../actionType';
 
 const initialState = {
 	insUserRoles: []
@@ -23,8 +18,6 @@ export const userInfo = (
 				...state,
 				...action.data
 			};
-		case CLEAR_USERINFO:
-			return initialState;
 		default:
 			return state;
 	}

@@ -4,10 +4,19 @@ import {
 import './index.scss'
 import { Button } from 'antd'
 import { PlusOutlined } from '@ant-design/icons'
+import { IPage } from '@src/store/actionType'
 
-interface IDesignBodyLeftProps { }
+interface IDesignBodyLeftProps {
+  pages: IPage[];
+  addLargeScreenPage: (data: IPage) => void;
+  delLargeScreenPage: (id: string) => void;
+}
 
-const DesignBodyLeft: FC<IDesignBodyLeftProps> = () => {
+const DesignBodyLeft: FC<IDesignBodyLeftProps> = ({
+  pages,
+  addLargeScreenPage,
+  delLargeScreenPage
+}) => {
   return (
     <div className='app-screen-disign__body--left'>
       <div className='body'>
@@ -18,7 +27,7 @@ const DesignBodyLeft: FC<IDesignBodyLeftProps> = () => {
           新增页面
         </Button>
       </div>
-      <div className="header">可配置页面</div>
+      <div className="header">页面列表</div>
       <ul className="page">
         <li className="page-item">xxx</li>
       </ul>
