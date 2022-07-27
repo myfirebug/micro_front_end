@@ -1,10 +1,11 @@
 import {
-  FC, useEffect, useRef, useState
+  FC, useState
 } from 'react'
 import './index.scss'
-import { Button, message, Modal } from 'antd'
+import { Button, message, Modal, Tooltip } from 'antd'
 import { PlusOutlined } from '@ant-design/icons'
 import { IPage } from '@src/store/actionType'
+import { FormOutlined, DeleteOutlined } from '@ant-design/icons'
 
 // 新增页面表单
 import AddOrEditPage from '../add-or-edit-page'
@@ -26,16 +27,6 @@ const DesignBodyLeft: FC<IDesignBodyLeftProps> = ({
   changeLargeScreenPage,
   currentPageId
 }) => {
-
-  const pageMenu = useRef<any>(null)
-
-  useEffect(() => {
-    const contextmenuHander = (e: Event) => {
-      e.preventDefault()
-      console.log(e)
-    }
-    pageMenu.current?.addEventListener('contextmenu', contextmenuHander)
-  }, [pageMenu.current])
 
   // 弹窗参数
   const [modal, setModal] = useState<any>({
@@ -63,6 +54,11 @@ const DesignBodyLeft: FC<IDesignBodyLeftProps> = ({
           details={modal.details}
         />
       </Modal>
+      {/* 右键显示的页面菜单功能 */}
+      <ul className="contextmenu">
+        <li className='contextmenu-item'>编辑</li>
+        <li className='contextmenu-item'>删除</li>
+      </ul>
       <div className='body'>
         <Button
           type="primary"
@@ -77,11 +73,12 @@ const DesignBodyLeft: FC<IDesignBodyLeftProps> = ({
         </Button>
       </div>
       <div className="header">页面列表</div>
-      <ul className="page" ref={pageMenu}>
+      <ul className="page">
         {
           pages.map(item => (
             <li
               key={item.id}
+              data-id={item.id}
               onClick={() => {
                 if (item.id !== currentPageId) {
                   changeLargeScreenPage(item.id as string, () => {
@@ -89,8 +86,34 @@ const DesignBodyLeft: FC<IDesignBodyLeftProps> = ({
                   })
                 }
               }}
-              className={`page-item ${item.id === currentPageId ? 'is-active' : ''}`}>
-              {item.name}
+              className={`page-item ${item.id === currentPageId ? 'is-active' : 'is-noactive'}`}>
+              <div className="name">{item.name}</div>
+              {/* 当前页面不允许编辑和删除 */}
+              {
+                item.id !== currentPageId &&
+                <div className="page-item__operation">
+                  <Tooltip title="编辑" placement="top">
+                    <span
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        setModal((state: any) => ({
+                          visible: true,
+                          title: '新增页面',
+                          details: item
+                        }))
+                      }
+                      }
+                    >
+                      <FormOutlined />
+                    </span>
+                  </Tooltip>
+                  <Tooltip title="删除" placement="top">
+                    <span>
+                      <DeleteOutlined />
+                    </span>
+                  </Tooltip>
+                </div>
+              }
             </li>
           ))
         }

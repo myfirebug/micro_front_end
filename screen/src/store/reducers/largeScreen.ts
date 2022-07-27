@@ -60,7 +60,17 @@ export const largeScreen = (
 			return state;
 		// 修改页面
 		case MODIFY_LARGESCREEN_PAGE:
-			return state;
+			return {
+				...state,
+				pages: state.pages.map((item) => {
+					if (item.id === action.id) {
+						return {
+							...action.data
+						};
+					}
+					return item;
+				})
+			};
 		// 切换页面
 		case CHANGE_LARGESCREEN_PAGE: {
 			const index = state.pages.findIndex((item) => item.id === action.id);
@@ -82,7 +92,6 @@ export const largeScreen = (
 				currentWidgetId: ''
 			};
 		}
-
 		case ADD_LARGESCREEN_ELEMENT:
 			return state;
 		case DEL_LARGESCREEN_ELEMENT:

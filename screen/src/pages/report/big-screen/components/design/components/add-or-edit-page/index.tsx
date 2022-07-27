@@ -1,5 +1,5 @@
 import React, {
-  FC
+  FC, useEffect
 } from 'react'
 import {
   Button,
@@ -9,6 +9,7 @@ import {
 } from 'antd'
 import { IPage } from '@src/store/actionType'
 import { guid } from '@src/utils/tools'
+import { useForm } from 'antd/lib/form/Form';
 
 interface IAddOrEditPageProps {
   setModal: React.Dispatch<any>;
@@ -23,6 +24,16 @@ const AddOrEditPage: FC<IAddOrEditPageProps> = ({
   modifyLargeScreenPage,
   details
 }) => {
+
+  const [form] = useForm()
+  // 编辑时回填表单数据
+  useEffect(() => {
+    if (details.name) {
+      form.setFieldsValue({
+        name: details.name
+      })
+    }
+  }, [details.name, form])
 
   // 成功回调函数
   const successHandler = (msg: string) => {
@@ -57,6 +68,7 @@ const AddOrEditPage: FC<IAddOrEditPageProps> = ({
       name="basic"
       onFinish={onFinish}
       autoComplete="off"
+      form={form}
     >
       <Form.Item
         name="name"
