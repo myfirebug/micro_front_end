@@ -1,11 +1,11 @@
 import {
-  FC, useState
+  FC, MouseEvent, useState
 } from 'react'
 import './index.scss'
 import { Button, message, Modal, Tooltip } from 'antd'
 import { PlusOutlined } from '@ant-design/icons'
 import { IPage } from '@src/store/actionType'
-import { FormOutlined, DeleteOutlined } from '@ant-design/icons'
+import { FormOutlined, DeleteOutlined, ExclamationCircleOutlined } from '@ant-design/icons'
 
 // 新增页面表单
 import AddOrEditPage from '../add-or-edit-page'
@@ -34,6 +34,33 @@ const DesignBodyLeft: FC<IDesignBodyLeftProps> = ({
     title: '',
     details: {}
   })
+
+  // 编辑
+  const editHander = (item: IPage, e: MouseEvent) => {
+    e.stopPropagation()
+    setModal((state: any) => ({
+      visible: true,
+      title: '新增页面',
+      details: item
+    }))
+  }
+
+  // 删除页面
+  const delHandler = (item: IPage, e: MouseEvent) => {
+    e.stopPropagation()
+    Modal.confirm({
+      title: '温馨提示',
+      icon: <ExclamationCircleOutlined />,
+      content: '确定要删除该页面吗？',
+      okText: '确认',
+      cancelText: '取消',
+      onOk: () => {
+        delLargeScreenPage(item.id as string, () => {
+          message.success('删除成功')
+        })
+      }
+    })
+  }
 
   return (
     <div className='app-screen-disign__body--left'>
@@ -94,21 +121,13 @@ const DesignBodyLeft: FC<IDesignBodyLeftProps> = ({
                 <div className="page-item__operation">
                   <Tooltip title="编辑" placement="top">
                     <span
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        setModal((state: any) => ({
-                          visible: true,
-                          title: '新增页面',
-                          details: item
-                        }))
-                      }
-                      }
+                      onClick={(e: MouseEvent) => editHander(item, e)}
                     >
                       <FormOutlined />
                     </span>
                   </Tooltip>
                   <Tooltip title="删除" placement="top">
-                    <span>
+                    <span onClick={(e: MouseEvent) => delHandler(item, e)}>
                       <DeleteOutlined />
                     </span>
                   </Tooltip>

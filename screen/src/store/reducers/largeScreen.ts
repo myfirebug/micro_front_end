@@ -57,7 +57,10 @@ export const largeScreen = (
 			};
 		// 删除页面
 		case DEL_LARGESCREEN_PAGE:
-			return state;
+			return {
+				...state,
+				pages: state.pages.filter((item) => item.id !== action.id)
+			};
 		// 修改页面
 		case MODIFY_LARGESCREEN_PAGE:
 			return {
