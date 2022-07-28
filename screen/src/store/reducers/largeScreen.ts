@@ -98,6 +98,7 @@ export const largeScreen = (
 				currentWidgetId: ''
 			};
 		}
+		// 添加元素
 		case ADD_LARGESCREEN_ELEMENT: {
 			const currentPage: IPage = { ...state.currentPage };
 			currentPage.widgets = currentPage.widgets
@@ -110,7 +111,7 @@ export const largeScreen = (
 				currentWidget: action.data
 			};
 		}
-
+		// 删除元素
 		case DEL_LARGESCREEN_ELEMENT:
 			return state;
 		case MODIFY_LARGESCREEN_ELEMENT: {

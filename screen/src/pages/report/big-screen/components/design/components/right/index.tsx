@@ -2,7 +2,7 @@ import {
   FC, useEffect, useState
 } from 'react'
 import './index.scss'
-import { Tabs, Form, Input, InputNumber, FormInstance, Row, Col, Select } from 'antd'
+import { Tabs, Form, Input, InputNumber, FormInstance, Row, Col, Select, Collapse } from 'antd'
 import { pageConfigure, coordinateConfigure } from '@src/widget/tools'
 import { SketchPicker } from 'react-color'
 import { IScreen, IWidget } from '@src/store/actionType'
@@ -10,6 +10,7 @@ import { IScreen, IWidget } from '@src/store/actionType'
 const { TextArea } = Input
 const { TabPane } = Tabs
 const { Option } = Select
+const { Panel } = Collapse
 
 interface IDesignBodyRightProps {
   screen: IScreen;
@@ -33,114 +34,148 @@ const DesignBodyRight: FC<IDesignBodyRightProps> = ({
   const [pageForm] = Form.useForm()
   // 坐标from
   const [dynamicForm] = Form.useForm()
+
+  useEffect(() => {
+    if (currentWidget.configureValue) {
+      configureForm.setFieldsValue(currentWidget.configureValue)
+    }
+    if (currentWidget.coordinateValue) {
+      dynamicForm.setFieldsValue(currentWidget.coordinateValue)
+    }
+  }, [currentWidget])
+  // 判断数据是Array 或者 object
+  const judgeType = (data: any, type: string) => {
+    return Object.prototype.toString.call(data) == type
+  }
+
   /**
    * 动态渲染表单
    * @param datas 表格数据
    * @returns ReactNode
    */
-  const renderDynamicForm = (datas: any, form: FormInstance<any>, callback?: Function) => {
-    return (
-      <>
-        {
-          datas.map((item: any, index: number) => (
-            <div key={index}>
-              {
-                item.type === 'Input' &&
-                <Form.Item
-                  label={item.label}
-                  name={item.name}
-                  rules={[{ required: item.require }]}
-                >
-                  <Input placeholder={item.placeholder} />
-                </Form.Item>
-              }
-              {
-                item.type === 'InputNumber' &&
-                <Form.Item
-                  label={item.label}
-                  name={item.name}
-                  rules={[{ required: item.require }]}
-                >
-                  <InputNumber style={{ width: '100%' }} placeholder={item.placeholder} />
-                </Form.Item>
-              }
-              {
-                item.type === 'TextArea' &&
-                <Form.Item
-                  label={item.label}
-                  name={item.name}
-                  rules={[{ required: item.require }]}
-                >
-                  <TextArea rows={8} placeholder={item.placeholder} />
-                </Form.Item>
-              }
-              {
-                item.type === 'Select' &&
-                <Form.Item
-                  label={item.label}
-                  name={item.name}
-                  rules={[{ required: item.require }]}
-                >
-                  <Select placeholder={item.placeholder}>
-                    {
-                      item.options.map((item: any) => (
-                        <Option
-                          key={item.code}
-                          value={item.code}>
-                          {item.name}
-                        </Option>
-                      ))
-                    }
-                  </Select>
-                </Form.Item>
-              }
-              {
-                item.type === 'SketchPicker' &&
-                <Form.Item label={item.label}>
-                  <Row>
-                    <Col span={12}>
-                      <Form.Item
-                        noStyle
-                        name={item.name}
-                        rules={[{ required: item.require }]}
-                      >
-                        <Input allowClear placeholder={item.placeholder} />
-                      </Form.Item>
-                    </Col>
-                    <Col span={11} offset={1}>
-                      <Form.Item shouldUpdate>
-                        {
-                          () => (
-                            <div className='color-wrapper' style={{
-                              background: form.getFieldValue(item.name)
-                            }}>
-                              获取颜色
-                              <div className='color'>
-                                <SketchPicker
-                                  color={form.getFieldValue(item.name)}
-                                  onChange={e => {
-                                    form.setFieldsValue({
-                                      [item.name]: e.hex
-                                    })
+  const renderDynamicForm = (datas: any, form: FormInstance<any>, callback: Function, field?: string) => {
+    return datas.map((item: any, index: number) => {
+      if (judgeType(item, '[object Object]')) {
+        return (
+          <div key={index}>
+            {
+              item.type === 'Input' &&
+              <Form.Item
+                label={item.label}
+                name={item.name}
+                rules={[{ required: item.require }]}
+              >
+                <Input placeholder={item.placeholder} />
+              </Form.Item>
+            }
+            {
+              item.type === 'InputNumber' &&
+              <Form.Item
+                label={item.label}
+                name={item.name}
+                rules={[{ required: item.require }]}
+              >
+                <InputNumber style={{ width: '100%' }} placeholder={item.placeholder} />
+              </Form.Item>
+            }
+            {
+              item.type === 'TextArea' &&
+              <Form.Item
+                label={item.label}
+                name={item.name}
+                rules={[{ required: item.require }]}
+              >
+                <TextArea rows={8} placeholder={item.placeholder} />
+              </Form.Item>
+            }
+            {
+              item.type === 'Select' &&
+              <Form.Item
+                label={item.label}
+                name={item.name}
+                rules={[{ required: item.require }]}
+              >
+                <Select placeholder={item.placeholder}>
+                  {
+                    item.options.map((item: any) => (
+                      <Option
+                        key={item.code}
+                        value={item.code}>
+                        {item.name}
+                      </Option>
+                    ))
+                  }
+                </Select>
+              </Form.Item>
+            }
+            {
+              item.type === 'SketchPicker' &&
+              <Form.Item label={item.label}>
+                <Row>
+                  <Col span={12}>
+                    <Form.Item
+                      noStyle
+                      name={item.name}
+                      rules={[{ required: item.require }]}
+                    >
+                      <Input allowClear placeholder={item.placeholder} />
+                    </Form.Item>
+                  </Col>
+                  <Col span={11} offset={1}>
+                    <Form.Item shouldUpdate noStyle>
+                      {
+                        () => (
+                          <div className='color-wrapper' style={{
+                            background: form.getFieldValue(item.name),
+                            width: '100%'
+                          }}>
+                            获取颜色
+                            <div className='color'>
+                              <SketchPicker
+                                color={form.getFieldValue(item.name)}
+                                onChange={e => {
+                                  form.setFieldsValue({
+                                    [item.name]: e.hex
+                                  })
+                                  if (!field) {
                                     callback && callback({
                                       [item.name]: e.hex
                                     })
-                                  }} />
-                              </div>
+                                  } else {
+                                    const newCurrentWidget = JSON.parse(JSON.stringify(currentWidget))
+                                    newCurrentWidget[field][item.name] = e.hex
+                                    callback && callback(currentWidgetId, newCurrentWidget)
+                                  }
+                                }} />
                             </div>
-                          )
-                        }
-                      </Form.Item>
+                          </div>
+                        )
+                      }
+                    </Form.Item>
 
-                    </Col>
-                  </Row>
-                </Form.Item>
-              }
-            </div>
-          ))
-        }
-      </>
-    )
+                  </Col>
+                </Row>
+              </Form.Item>
+            }
+          </div>
+        )
+      }
+      if (judgeType(item, '[object Array]')) {
+        return (
+          <Collapse accordion key={index}>
+            {
+              item.map((subItem: any, subIndex: number) => (
+                <Panel header={subItem.name} key={subIndex}>
+                  {
+                    renderDynamicForm(subItem.list, form, callback, field)
+                  }
+                </Panel>
+              ))
+            }
+          </Collapse>
+        )
+      }
+    })
   }
 
   useEffect(() => {
@@ -158,72 +193,68 @@ const DesignBodyRight: FC<IDesignBodyRightProps> = ({
           Content of Tab Pane 4
         </TabPane>
         <TabPane tab="项目配置" key="1">
-          <div className='body'>
-            <Form
-              form={pageForm}
-              labelCol={{ span: 6 }}
-              wrapperCol={{ span: 18 }}
-              autoComplete="off"
-              labelAlign="left"
-              initialValues={screen}
-              onValuesChange={(changedValues, allValues) => modifyScreen(allValues)}
-            >
-              {
-                renderDynamicForm(pageConfigure.configure, pageForm, modifyScreen)
-              }
-            </Form>
-          </div>
+          <Form
+            form={pageForm}
+            labelCol={{ span: 6 }}
+            wrapperCol={{ span: 18 }}
+            autoComplete="off"
+            labelAlign="left"
+            initialValues={screen}
+            onValuesChange={(changedValues, allValues) => modifyScreen(allValues)}
+          >
+            {
+              renderDynamicForm(pageConfigure.configure, pageForm, modifyScreen)
+            }
+          </Form>
         </TabPane>
         {
           currentWidgetId && <>
             <TabPane tab="配置" key="2">
-              <div className='body'>
-                <Form
-                  form={configureForm}
-                  labelCol={{ span: 6 }}
-                  wrapperCol={{ span: 18 }}
-                  autoComplete="off"
-                  labelAlign="left"
-                  initialValues={currentWidget.options.configureValue}
-                  onValuesChange={(changedValues, allValues) => modifyLargeScreenElement(currentWidgetId, {
-                    ...currentWidget,
-                    options: {
-                      ...currentWidget.options,
-                      configureValue: allValues
-                    }
-                  })}
-                >
-                  {
-                    renderDynamicForm(currentWidget.options.configure, configureForm)
-                  }
-                </Form>
-              </div>
+              <Form
+                form={configureForm}
+                labelCol={{ span: 6 }}
+                wrapperCol={{ span: 18 }}
+                autoComplete="off"
+                labelAlign="left"
+                onValuesChange={(changedValues, allValues) => modifyLargeScreenElement(currentWidgetId, {
+                  ...currentWidget,
+                  configureValue: allValues
+                })}
+              >
+                {
+                  renderDynamicForm(
+                    currentWidget.configure,
+                    configureForm,
+                    modifyLargeScreenElement,
+                    'configureValue'
+                  )
+                }
+              </Form>
             </TabPane>
             <TabPane tab="数据" key="3">
               Content of Tab Pane 3
             </TabPane>
             <TabPane tab="坐标" key="4">
-              <div className='body'>
-                <Form
-                  form={dynamicForm}
-                  labelCol={{ span: 6 }}
-                  wrapperCol={{ span: 18 }}
-                  autoComplete="off"
-                  labelAlign="left"
-                  initialValues={currentWidget.options.coordinateValue}
-                  onValuesChange={(changedValues, allValues) => modifyLargeScreenElement(currentWidgetId, {
-                    ...currentWidget,
-                    options: {
-                      ...currentWidget.options,
-                      coordinateValue: allValues
-                    }
-                  })}
-                >
-                  {
-                    renderDynamicForm(coordinateConfigure.configure, dynamicForm)
-                  }
-                </Form>
-              </div>
+              <Form
+                form={dynamicForm}
+                labelCol={{ span: 6 }}
+                wrapperCol={{ span: 18 }}
+                autoComplete="off"
+                labelAlign="left"
+                onValuesChange={(changedValues, allValues) => modifyLargeScreenElement(currentWidgetId, {
+                  ...currentWidget,
+                  coordinateValue: allValues
+                })}
+              >
+                {
+                  renderDynamicForm(
+                    coordinateConfigure.configure,
+                    dynamicForm,
+                    modifyLargeScreenElement,
+                    'coordinateValue'
+                  )
+                }
+              </Form>
             </TabPane>
           </>
         }

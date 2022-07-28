@@ -82,21 +82,19 @@ export const STRATEGY = 'STRATEGY';
 export type STRATEGY_TYPE = typeof STRATEGY;
 
 // 组件
-export interface IWidget {
+export interface IWidget extends IAnyObject {
 	// 组件code
 	code: string;
 	// 组件类型
 	type: string;
 	// 组件ID
 	id: string;
-	options: {
-		// 配置项值
-		configureValue: any;
-		// 基础配置项
-		configure: any[];
-		// 坐标值
-		coordinateValue: any;
-	};
+	// 配置项值
+	configureValue: any;
+	// 基础配置项
+	configure: any[];
+	// 坐标值
+	coordinateValue: any;
 }
 
 // 页面接口

@@ -146,16 +146,18 @@ const Disign: FC<IDisignProps> = ({
                 <rect id="wrapper" x="0" y="0" fill="url(#p1)" width="100%" height="100%"></rect>
               </svg>
             </div>
+            {/* 
+                overflow: 'hidden',
+                transform: `scale(${cale})`,
+                transformOrigin: '0 0'
+            */}
             <div
               style={{
                 position: 'relative',
                 zIndex: 1,
                 width: screen.width,
                 height: screen.height,
-                backgroundColor: screen.backgroundColor,
-                overflow: 'hidden',
-                transform: `scale(${cale})`,
-                transformOrigin: '0 0'
+                backgroundColor: screen.backgroundColor
               }}>
               {
                 currentPage && currentPage.widgets ?
@@ -164,9 +166,9 @@ const Disign: FC<IDisignProps> = ({
                     if (Widget) {
                       return (
                         <div className='app-widget__wrap' key={index}>
-                          <Widget text={item.options.configureValue.elementValue} style={{
-                            ...item.options.configureValue,
-                            ...item.options.coordinateValue
+                          <Widget text={item.configureValue.elementValue} style={{
+                            ...item.configureValue,
+                            ...item.coordinateValue
                           }} />
                         </div>
                       )
@@ -178,13 +180,13 @@ const Disign: FC<IDisignProps> = ({
         </div>
         {/* 右边 */}
         {
-          pages.length &&
-          <DesignBodyRight
-            screen={screen}
-            modifyLargeScreenElement={modifyLargeScreenElement}
-            modifyScreen={modifyScreen}
-            currentWidget={currentWidget}
-            currentWidgetId={currentWidgetId} />
+          pages.length ?
+            <DesignBodyRight
+              screen={screen}
+              modifyLargeScreenElement={modifyLargeScreenElement}
+              modifyScreen={modifyScreen}
+              currentWidget={currentWidget}
+              currentWidgetId={currentWidgetId} /> : null
         }
       </div>
     </div>
