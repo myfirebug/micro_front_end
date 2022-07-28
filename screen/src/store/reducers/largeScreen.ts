@@ -52,6 +52,15 @@ export const largeScreen = (
 			};
 		// 新增页面
 		case ADD_LARGESCREEN_PAGE:
+			if (copy.currentPage) {
+				// 这里首页判断当前currentPage在pages里的下标，然后替换数据
+				const currentPageIndex = copy.pages.findIndex(
+					(item) => item.id === copy.currentPage.id
+				);
+				if (currentPageIndex !== -1) {
+					copy.pages[currentPageIndex] = { ...copy.currentPage };
+				}
+			}
 			return {
 				...copy,
 				pages: [...copy.pages, action.data],
@@ -81,6 +90,15 @@ export const largeScreen = (
 			};
 		// 切换页面
 		case CHANGE_LARGESCREEN_PAGE: {
+			// 这里首页判断当前currentPage在pages里的下标，然后替换数据
+			const currentPageIndex = copy.pages.findIndex(
+				(item) => item.id === copy.currentPage.id
+			);
+			if (currentPageIndex !== -1) {
+				copy.pages[currentPageIndex] = { ...copy.currentPage };
+			}
+
+			// 这里找到需要修改的id的下标
 			const index = copy.pages.findIndex((item) => item.id === action.id);
 			return {
 				...copy,
@@ -133,32 +151,44 @@ export const largeScreen = (
 				currentWidget: action.data
 			};
 		}
+		// 撤销
 		case UNDO_LARGESCREEN: {
 			let pastPage: IPage[] = [...state.pastPage];
 			let futurePage: IPage[] = [...state.futurePage];
-			let last: IPage = pastPage.pop() as IPage;
-			futurePage.unshift({ ...copy.currentPage });
+			if (pastPage.length) {
+				let last: IPage = pastPage.pop() as IPage;
+				futurePage.unshift({ ...copy.currentPage });
+				return {
+					...copy,
+					pastPage: pastPage,
+					futurePage: futurePage,
+					currentPage: last,
+					currentWidgetId: '',
+					currentWidget: {} as IWidget
+				};
+			}
 			return {
-				...copy,
-				pastPage: pastPage,
-				futurePage: futurePage,
-				currentPage: last,
-				currentWidgetId: '',
-				currentWidget: {} as IWidget
+				...copy
 			};
 		}
+		// 恢复
 		case REDO_LARGESCREEN: {
 			let pastPage: IPage[] = [...state.pastPage];
 			let futurePage: IPage[] = [...state.futurePage];
-			let first: IPage = futurePage.shift() as IPage;
-			pastPage.push({ ...copy.currentPage });
+			if (futurePage.length) {
+				let first: IPage = futurePage.shift() as IPage;
+				pastPage.push({ ...copy.currentPage });
+				return {
+					...copy,
+					pastPage: pastPage,
+					futurePage: futurePage,
+					currentPage: first,
+					currentWidgetId: '',
+					currentWidget: {} as IWidget
+				};
+			}
 			return {
-				...copy,
-				pastPage: pastPage,
-				futurePage: futurePage,
-				currentPage: first,
-				currentWidgetId: '',
-				currentWidget: {} as IWidget
+				...copy
 			};
 		}
 		default:

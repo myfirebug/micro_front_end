@@ -522,10 +522,62 @@ export const getEventPath = (event: any) => {
 	return event.path || (event.composedPath && event.composedPath()) || '';
 };
 
+/**
+ * 防抖
+ * @param fn 传入的方法
+ * @param delay 时间毫秒 单位ms
+ * @param immediate 是否默认值一次默认false
+ * @returns 方法
+ */
+export const debounce = (
+	fn: Function,
+	delay: number,
+	immediate: boolean = false
+): Function => {
+	let timer: any = null;
+	return (...args: any[]) => {
+		if (immediate) {
+			fn.apply(this, args);
+			immediate = false;
+			return;
+		}
+		clearTimeout(timer);
+		timer = setTimeout(() => {
+			fn.apply(this, args);
+		}, delay);
+	};
+};
 export const validateionLen = {
 	defalut: 50,
 	small: 20,
 	large: 100
+};
+
+/**
+ * 节流
+ * @param fn 传入的方法
+ * @param delay 时间毫秒 单位ms
+ * @param immediate 是否默认值一次默认false
+ * @returns 方法
+ */
+export const throttle = (
+	fn: Function,
+	delay: number,
+	immediate: boolean = false
+): Function => {
+	let timer: any = null;
+	return (...args: any) => {
+		if (immediate) {
+			fn.apply(this, args);
+			immediate = false;
+			return;
+		}
+		if (!timer) {
+			timer = setTimeout(() => {
+				fn.apply(this, args);
+			}, delay);
+		}
+	};
 };
 
 // 路由前缀，主要用于部署时

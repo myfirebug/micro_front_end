@@ -10,6 +10,8 @@ const text = {
         letterSpacing: 0,
         fontWeight: 'normal',
         textAlign: 'center',
+        backgroundColor: '',
+        lineHeight: 1,
         a: true,
         b: 50,
         c: 0,
@@ -48,6 +50,13 @@ const text = {
             placeholder: ''
         },
         {
+            type: 'InputNumber',
+            label: '行高',
+            name: 'lineHeight',
+            required: false,
+            placeholder: ''
+        },
+        {
             type: 'Select',
             label: '文字粗细',
             name: 'fontWeight',
@@ -78,6 +87,13 @@ const text = {
             name: 'color',
             required: false,
             placeholder: '请选择字体颜色'
+        },
+        {
+            type: 'SketchPicker',
+            label: '背景颜色',
+            name: 'backgroundColor',
+            required: false,
+            placeholder: '请选择背景颜色'
         },
         [{
                 name: '柱体设置',

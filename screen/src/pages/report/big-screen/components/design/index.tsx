@@ -181,7 +181,8 @@ const Disign: FC<IDisignProps> = ({
                         <div className='app-widget__wrap' key={index}>
                           <Widget text={item.configureValue.elementValue} style={{
                             ...item.configureValue,
-                            ...item.coordinateValue
+                            ...item.coordinateValue,
+                            fontSize: Number(item.configureValue.fontSize)
                           }} />
                         </div>
                       )

@@ -6,6 +6,8 @@ import { Tabs, Form, Input, InputNumber, FormInstance, Row, Col, Select, Collaps
 import { pageConfigure, coordinateConfigure } from '@src/widget/tools'
 import { SketchPicker } from 'react-color'
 import { IScreen, IWidget } from '@src/store/actionType'
+import { debounce } from '@src/utils/tools'
+import { StringGradients } from 'antd/lib/progress/progress'
 
 const { TextArea } = Input
 const { TabPane } = Tabs
@@ -49,6 +51,27 @@ const DesignBodyRight: FC<IDesignBodyRightProps> = ({
   }
 
   /**
+   * 
+   * @param callback 返回的方法
+   * @param name 表单名
+   * @param value 表单值
+   * @param field 字段名
+   */
+  const onChangeHandler = (callback: Function, name: string, value: any, field?: string) => {
+    if (!field) {
+      callback && callback({
+        [name]: value
+      })
+    } else {
+      const newCurrentWidget = JSON.parse(JSON.stringify(currentWidget))
+      newCurrentWidget[field][name] = value
+      callback && callback(currentWidgetId, {
+        ...newCurrentWidget
+      })
+    }
+  }
+
+  /**
    * 动态渲染表单
    * @param datas 表格数据
    * @returns ReactNode
@@ -65,7 +88,9 @@ const DesignBodyRight: FC<IDesignBodyRightProps> = ({
                 name={item.name}
                 rules={[{ required: item.require }]}
               >
-                <Input placeholder={item.placeholder} />
+                <Input
+                  onBlur={e => onChangeHandler(callback, item.name, e.target.value, field)}
+                  placeholder={item.placeholder} />
               </Form.Item>
             }
             {
@@ -75,7 +100,10 @@ const DesignBodyRight: FC<IDesignBodyRightProps> = ({
                 name={item.name}
                 rules={[{ required: item.require }]}
               >
-                <InputNumber style={{ width: '100%' }} placeholder={item.placeholder} />
+                <InputNumber
+                  onBlur={e => onChangeHandler(callback, item.name, e.target.value ? Number(e.target.value) : 0, field)}
+                  style={{ width: '100%' }}
+                  placeholder={item.placeholder} />
               </Form.Item>
             }
             {
@@ -85,7 +113,10 @@ const DesignBodyRight: FC<IDesignBodyRightProps> = ({
                 name={item.name}
                 rules={[{ required: item.require }]}
               >
-                <TextArea rows={8} placeholder={item.placeholder} />
+                <TextArea
+                  onBlur={e => onChangeHandler(callback, item.name, e.target.value, field)}
+                  rows={8}
+                  placeholder={item.placeholder} />
               </Form.Item>
             }
             {
@@ -96,7 +127,7 @@ const DesignBodyRight: FC<IDesignBodyRightProps> = ({
                 valuePropName="checked"
                 rules={[{ required: item.require }]}
               >
-                <Switch />
+                <Switch onChange={(value) => onChangeHandler(callback, item.name, value, field)} />
               </Form.Item>
             }
             {
@@ -106,7 +137,7 @@ const DesignBodyRight: FC<IDesignBodyRightProps> = ({
                 name={item.name}
                 rules={[{ required: item.require }]}
               >
-                <Slider />
+                <Slider onAfterChange={(value) => onChangeHandler(callback, item.name, value, field)} />
               </Form.Item>
             }
             {
@@ -116,7 +147,9 @@ const DesignBodyRight: FC<IDesignBodyRightProps> = ({
                 name={item.name}
                 rules={[{ required: item.require }]}
               >
-                <Select placeholder={item.placeholder}>
+                <Select
+                  onSelect={(value: string) => onChangeHandler(callback, item.name, value, field)}
+                  placeholder={item.placeholder}>
                   {
                     item.options.map((item: any) => (
                       <Option
@@ -139,7 +172,10 @@ const DesignBodyRight: FC<IDesignBodyRightProps> = ({
                       name={item.name}
                       rules={[{ required: item.require }]}
                     >
-                      <Input allowClear placeholder={item.placeholder} />
+                      <Input
+                        allowClear
+                        onBlur={e => onChangeHandler(callback, item.name, e.target.value, field)}
+                        placeholder={item.placeholder} />
                     </Form.Item>
                   </Col>
                   <Col span={11} offset={1}>
@@ -154,19 +190,20 @@ const DesignBodyRight: FC<IDesignBodyRightProps> = ({
                             <div className='color'>
                               <SketchPicker
                                 color={form.getFieldValue(item.name)}
-                                onChange={e => {
+                                onChangeComplete={e => {
                                   form.setFieldsValue({
                                     [item.name]: e.hex
                                   })
-                                  if (!field) {
-                                    callback && callback({
-                                      [item.name]: e.hex
-                                    })
-                                  } else {
-                                    const newCurrentWidget = JSON.parse(JSON.stringify(currentWidget))
-                                    newCurrentWidget[field][item.name] = e.hex
-                                    callback && callback(currentWidgetId, newCurrentWidget)
-                                  }
+                                  // if (!field) {
+                                  //   callback && callback({
+                                  //     [item.name]: e.hex
+                                  //   })
+                                  // } else {
+                                  //   const newCurrentWidget = JSON.parse(JSON.stringify(currentWidget))
+                                  //   newCurrentWidget[field][item.name] = e.hex
+                                  //   callback && callback(currentWidgetId, newCurrentWidget)
+                                  // }
+                                  onChangeHandler(callback, item.name, e.hex, field)
                                 }} />
                             </div>
                           </div>
@@ -178,7 +215,7 @@ const DesignBodyRight: FC<IDesignBodyRightProps> = ({
                 </Row>
               </Form.Item>
             }
-          </div>
+          </div >
         )
       }
       if (judgeType(item, '[object Array]')) {
@@ -225,7 +262,7 @@ const DesignBodyRight: FC<IDesignBodyRightProps> = ({
             autoComplete="off"
             labelAlign="left"
             initialValues={screen}
-            onValuesChange={(changedValues, allValues) => modifyScreen(allValues)}
+          // onValuesChange={(changedValues, allValues) => modifyScreen(allValues)}
           >
             {
               renderDynamicForm(pageConfigure.configure, pageForm, modifyScreen)
@@ -241,10 +278,12 @@ const DesignBodyRight: FC<IDesignBodyRightProps> = ({
                 wrapperCol={{ span: 18 }}
                 autoComplete="off"
                 labelAlign="left"
-                onValuesChange={(changedValues, allValues) => modifyLargeScreenElement(currentWidgetId, {
-                  ...currentWidget,
-                  configureValue: allValues
-                })}
+              // onValuesChange={(changedValues, allValues) => {
+              //   modifyLargeScreenElement(currentWidgetId, {
+              //     ...currentWidget,
+              //     configureValue: allValues
+              //   })
+              // }}
               >
                 {
                   renderDynamicForm(
@@ -266,10 +305,10 @@ const DesignBodyRight: FC<IDesignBodyRightProps> = ({
                 wrapperCol={{ span: 18 }}
                 autoComplete="off"
                 labelAlign="left"
-                onValuesChange={(changedValues, allValues) => modifyLargeScreenElement(currentWidgetId, {
-                  ...currentWidget,
-                  coordinateValue: allValues
-                })}
+              // onValuesChange={(changedValues, allValues) => modifyLargeScreenElement(currentWidgetId, {
+              //   ...currentWidget,
+              //   coordinateValue: allValues
+              // })}
               >
                 {
                   renderDynamicForm(

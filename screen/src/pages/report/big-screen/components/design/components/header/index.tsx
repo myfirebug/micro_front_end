@@ -66,6 +66,7 @@ const DesignHeader: FC<IDesignHeaderProps> = ({
         {
           componentsClassify.map((item: any, index: number) => (
             <li
+              className={`${!currentPageId ? 'is-disabled' : ''}`}
               onClick={() => {
                 if (item.widgetName) {
                   addElement(item.widgetName)
@@ -96,7 +97,11 @@ const DesignHeader: FC<IDesignHeaderProps> = ({
           </Tooltip>
         </li>
         <li
-          onClick={undoLargeScreen}
+          onClick={() => {
+            if (pastPage.length) {
+              undoLargeScreen()
+            }
+          }}
           className={`${!pastPage.length ? 'is-disabled' : ''}`}>
           <Tooltip title="撤销(ctrl+z)" placement="bottom">
             <RotateLeftOutlined />
@@ -104,7 +109,11 @@ const DesignHeader: FC<IDesignHeaderProps> = ({
           </Tooltip>
         </li>
         <li
-          onClick={redoLargeScreen}
+          onClick={() => {
+            if (futurePage.length) {
+              redoLargeScreen()
+            }
+          }}
           className={`${!futurePage.length ? 'is-disabled' : ''}`}>
           <Tooltip title="恢复(ctrl+shift+z)" placement="bottom">
             <RotateRightOutlined />
