@@ -1,3 +1,4 @@
+import { copyFile } from 'fs';
 import { ModifyAction } from '../actions/largeScreen';
 import {
 	LARGE_SCREEN,
@@ -37,22 +38,23 @@ export const largeScreen = (
 	state: LARGESCREEN_STATE = initialState,
 	action: ModifyAction
 ): LARGESCREEN_STATE => {
+	const copy: LARGESCREEN_STATE = JSON.parse(JSON.stringify(state));
 	switch (action.type) {
 		case LARGE_SCREEN:
 			return state;
 		case MODIFY_SCREEN:
 			return {
-				...state,
+				...copy,
 				screen: {
-					...state.screen,
+					...copy.screen,
 					...action.datas
 				}
 			};
 		// 新增页面
 		case ADD_LARGESCREEN_PAGE:
 			return {
-				...state,
-				pages: [...state.pages, action.data],
+				...copy,
+				pages: [...copy.pages, action.data],
 				currentPage: action.data,
 				pastPage: [],
 				futurePage: [],
@@ -61,14 +63,14 @@ export const largeScreen = (
 		// 删除页面
 		case DEL_LARGESCREEN_PAGE:
 			return {
-				...state,
-				pages: state.pages.filter((item) => item.id !== action.id)
+				...copy,
+				pages: copy.pages.filter((item) => item.id !== action.id)
 			};
 		// 修改页面
 		case MODIFY_LARGESCREEN_PAGE:
 			return {
-				...state,
-				pages: state.pages.map((item) => {
+				...copy,
+				pages: copy.pages.map((item) => {
 					if (item.id === action.id) {
 						return {
 							...action.data
@@ -79,19 +81,19 @@ export const largeScreen = (
 			};
 		// 切换页面
 		case CHANGE_LARGESCREEN_PAGE: {
-			const index = state.pages.findIndex((item) => item.id === action.id);
+			const index = copy.pages.findIndex((item) => item.id === action.id);
 			return {
-				...state,
-				pages: state.pages.map((item) => {
-					if (item.id === state.currentPage.id) {
+				...copy,
+				pages: copy.pages.map((item) => {
+					if (item.id === copy.currentPage.id) {
 						return {
-							...state.currentPage
+							...copy.currentPage
 						};
 					}
 					return item;
 				}),
 				currentPage: {
-					...state.pages[index]
+					...copy.pages[index]
 				},
 				pastPage: [],
 				futurePage: [],
@@ -100,12 +102,13 @@ export const largeScreen = (
 		}
 		// 添加元素
 		case ADD_LARGESCREEN_ELEMENT: {
-			const currentPage: IPage = { ...state.currentPage };
+			const currentPage: IPage = { ...copy.currentPage };
 			currentPage.widgets = currentPage.widgets
 				? [...currentPage.widgets, action.data]
 				: [];
 			return {
-				...state,
+				...copy,
+				pastPage: [...copy.pastPage, currentPage],
 				currentPage: currentPage,
 				currentWidgetId: action.data.id,
 				currentWidget: action.data
@@ -113,9 +116,10 @@ export const largeScreen = (
 		}
 		// 删除元素
 		case DEL_LARGESCREEN_ELEMENT:
-			return state;
+			return copy;
+		// 修改元素
 		case MODIFY_LARGESCREEN_ELEMENT: {
-			const currentPage: IPage = { ...state.currentPage };
+			const currentPage: IPage = { ...copy.currentPage };
 			currentPage.widgets = currentPage.widgets.map((item) => {
 				if (item.id === action.id) {
 					return action.data;
@@ -123,15 +127,40 @@ export const largeScreen = (
 				return item;
 			});
 			return {
-				...state,
+				...copy,
+				pastPage: [...copy.pastPage, currentPage],
 				currentPage: currentPage,
 				currentWidget: action.data
 			};
 		}
-		case UNDO_LARGESCREEN:
-			return state;
-		case REDO_LARGESCREEN:
-			return state;
+		case UNDO_LARGESCREEN: {
+			let pastPage: IPage[] = [...state.pastPage];
+			let futurePage: IPage[] = [...state.futurePage];
+			let last: IPage = pastPage.pop() as IPage;
+			futurePage.unshift({ ...copy.currentPage });
+			return {
+				...copy,
+				pastPage: pastPage,
+				futurePage: futurePage,
+				currentPage: last,
+				currentWidgetId: '',
+				currentWidget: {} as IWidget
+			};
+		}
+		case REDO_LARGESCREEN: {
+			let pastPage: IPage[] = [...state.pastPage];
+			let futurePage: IPage[] = [...state.futurePage];
+			let first: IPage = futurePage.shift() as IPage;
+			pastPage.push({ ...copy.currentPage });
+			return {
+				...copy,
+				pastPage: pastPage,
+				futurePage: futurePage,
+				currentPage: first,
+				currentWidgetId: '',
+				currentWidget: {} as IWidget
+			};
+		}
 		default:
 			return state;
 	}

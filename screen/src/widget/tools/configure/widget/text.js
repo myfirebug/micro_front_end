@@ -10,8 +10,8 @@ const text = {
         letterSpacing: 0,
         fontWeight: 'normal',
         textAlign: 'center',
-        a: 0,
-        b: 0,
+        a: true,
+        b: 50,
         c: 0,
         d: 0,
         xcolor: '',
@@ -82,20 +82,18 @@ const text = {
         [{
                 name: '柱体设置',
                 list: [{
-                        type: 'Input',
+                        type: 'Switch',
                         label: '最大宽度',
                         name: 'a',
                         required: false,
-                        placeholder: '',
-                        value: 20
+                        placeholder: ''
                     },
                     {
-                        type: 'Input',
+                        type: 'Slider',
                         label: '最大宽度',
                         name: 'b',
                         required: false,
-                        placeholder: '',
-                        value: 20
+                        placeholder: ''
                     },
                     {
                         type: 'SketchPicker',
@@ -113,16 +111,14 @@ const text = {
                         label: '最大宽度',
                         name: 'c',
                         required: false,
-                        placeholder: '',
-                        value: 20
+                        placeholder: ''
                     },
                     {
                         type: 'Input',
                         label: '最大宽度',
                         name: 'd',
                         required: false,
-                        placeholder: '',
-                        value: 20
+                        placeholder: ''
                     },
                     {
                         type: 'SketchPicker',

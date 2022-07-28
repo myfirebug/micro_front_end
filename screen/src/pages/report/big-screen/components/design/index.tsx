@@ -49,6 +49,10 @@ interface IDisignProps {
   currentPage: IPage;
   currentWidgetId: string;
   currentWidget: IWidget;
+  pastPage: IPage[];
+  futurePage: IPage[];
+  undoLargeScreen: () => void;
+  redoLargeScreen: () => void;
 }
 
 const Disign: FC<IDisignProps> = ({
@@ -65,7 +69,11 @@ const Disign: FC<IDisignProps> = ({
   currentPage,
   currentWidgetId,
   currentWidget,
-  modifyLargeScreenElement
+  modifyLargeScreenElement,
+  pastPage,
+  futurePage,
+  undoLargeScreen,
+  redoLargeScreen
 }) => {
 
   // 获取装组件的盒子，这里需要获取他的宽度
@@ -99,9 +107,14 @@ const Disign: FC<IDisignProps> = ({
     <div className='app-screen-disign'>
       {/* 头部 */}
       <DesignHeader
+        undoLargeScreen={undoLargeScreen}
+        redoLargeScreen={redoLargeScreen}
         addLargeScreenElement={addLargeScreenElement}
         drawer={drawer}
         currentPageId={currentPage.id}
+        pastPage={pastPage}
+        futurePage={futurePage}
+        currentWidgetId={currentWidgetId}
         setDrawer={setDrawer} />
       {/* 内容区 */}
       <div className='app-screen-disign__body'>
@@ -196,6 +209,8 @@ const Disign: FC<IDisignProps> = ({
 // 对应的statemkjh m,
 const mapStateToProps = (state: ALL_STATE) => ({
   pages: state.largeScreen.pages,
+  pastPage: state.largeScreen.pastPage,
+  futurePage: state.largeScreen.futurePage,
   currentPage: state.largeScreen.currentPage,
   currentWidgetId: state.largeScreen.currentWidgetId,
   screen: state.largeScreen.screen,

@@ -19,19 +19,30 @@ import { widgetConfigure } from '@src/widget/tools'
 import { componentsClassify } from '@src/widget'
 import { guid } from '@src/utils/tools'
 import './index.scss'
+import { IPage } from '@src/store/actionType'
 
 interface IDesignHeaderProps {
   drawer: any;
   setDrawer: React.Dispatch<any>;
   addLargeScreenElement: (data: any) => void;
+  pastPage: IPage[];
+  futurePage: IPage[];
+  currentWidgetId?: string;
   currentPageId?: string;
+  undoLargeScreen: () => void;
+  redoLargeScreen: () => void;
 }
 
 const DesignHeader: FC<IDesignHeaderProps> = ({
   drawer,
   setDrawer,
   addLargeScreenElement,
-  currentPageId
+  currentPageId,
+  pastPage,
+  futurePage,
+  currentWidgetId,
+  undoLargeScreen,
+  redoLargeScreen
 }) => {
   // 向页面添加组件
   const addElement = (code: string) => {
@@ -72,49 +83,53 @@ const DesignHeader: FC<IDesignHeaderProps> = ({
       </ul>
       {/* elements end */}
       <ul className='app-screen-disign__header--center'>
-        <li>
+        <li className={`${!currentPageId ? 'is-disabled' : ''}`}>
           <Tooltip title="保存(ctrl+s)" placement="bottom">
             <SaveOutlined />
             <p>保存</p>
           </Tooltip>
         </li>
-        <li>
+        <li className={`${!currentPageId ? 'is-disabled' : ''}`}>
           <Tooltip title="预览(ctrl+p)" placement="bottom">
             <EyeOutlined />
             <p>预览</p>
           </Tooltip>
         </li>
-        <li>
+        <li
+          onClick={undoLargeScreen}
+          className={`${!pastPage.length ? 'is-disabled' : ''}`}>
           <Tooltip title="撤销(ctrl+z)" placement="bottom">
             <RotateLeftOutlined />
             <p>撤销</p>
           </Tooltip>
         </li>
-        <li>
+        <li
+          onClick={redoLargeScreen}
+          className={`${!futurePage.length ? 'is-disabled' : ''}`}>
           <Tooltip title="恢复(ctrl+shift+z)" placement="bottom">
             <RotateRightOutlined />
             <p>恢复</p>
           </Tooltip>
         </li>
-        <li>
+        <li className={`${!currentWidgetId ? 'is-disabled' : ''}`}>
           <Tooltip title="上移(↑)" placement="bottom">
             <ArrowUpOutlined />
             <p>上移</p>
           </Tooltip>
         </li>
-        <li>
+        <li className={`${!currentWidgetId ? 'is-disabled' : ''}`}>
           <Tooltip title="下移(↓)" placement="bottom">
             <ArrowDownOutlined />
             <p>下移</p>
           </Tooltip>
         </li>
-        <li>
+        <li className={`${!currentWidgetId ? 'is-disabled' : ''}`}>
           <Tooltip title="左移(←)" placement="bottom">
             <ArrowLeftOutlined />
             <p>左移</p>
           </Tooltip>
         </li>
-        <li>
+        <li className={`${!currentWidgetId ? 'is-disabled' : ''}`}>
           <Tooltip title="右移(→)" placement="bottom">
             <ArrowRightOutlined />
             <p>右移</p>

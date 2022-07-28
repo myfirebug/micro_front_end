@@ -1,3 +1,4 @@
+/*eslint no-invalid-this: "off"*/
 import { IAnyObject } from '@src/types';
 
 /**

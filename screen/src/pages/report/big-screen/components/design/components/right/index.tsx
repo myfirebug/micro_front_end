@@ -2,7 +2,7 @@ import {
   FC, useEffect, useState
 } from 'react'
 import './index.scss'
-import { Tabs, Form, Input, InputNumber, FormInstance, Row, Col, Select, Collapse } from 'antd'
+import { Tabs, Form, Input, InputNumber, FormInstance, Row, Col, Select, Collapse, Switch, Slider } from 'antd'
 import { pageConfigure, coordinateConfigure } from '@src/widget/tools'
 import { SketchPicker } from 'react-color'
 import { IScreen, IWidget } from '@src/store/actionType'
@@ -86,6 +86,27 @@ const DesignBodyRight: FC<IDesignBodyRightProps> = ({
                 rules={[{ required: item.require }]}
               >
                 <TextArea rows={8} placeholder={item.placeholder} />
+              </Form.Item>
+            }
+            {
+              item.type === 'Switch' &&
+              <Form.Item
+                label={item.label}
+                name={item.name}
+                valuePropName="checked"
+                rules={[{ required: item.require }]}
+              >
+                <Switch />
+              </Form.Item>
+            }
+            {
+              item.type === 'Slider' &&
+              <Form.Item
+                label={item.label}
+                name={item.name}
+                rules={[{ required: item.require }]}
+              >
+                <Slider />
               </Form.Item>
             }
             {
@@ -179,7 +200,11 @@ const DesignBodyRight: FC<IDesignBodyRightProps> = ({
   }
 
   useEffect(() => {
-    setKey('2')
+    if (currentWidgetId) {
+      setKey('2')
+    } else {
+      setKey('1')
+    }
   }, [currentWidgetId])
 
   return (
