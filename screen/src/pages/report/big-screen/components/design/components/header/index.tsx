@@ -1,5 +1,5 @@
 import React, {
-  FC
+  FC, useCallback, useEffect
 } from 'react'
 import { message, Tooltip } from 'antd'
 import {
@@ -34,7 +34,6 @@ interface IDesignHeaderProps {
 }
 
 const DesignHeader: FC<IDesignHeaderProps> = ({
-  drawer,
   setDrawer,
   addLargeScreenElement,
   currentPageId,
@@ -58,6 +57,37 @@ const DesignHeader: FC<IDesignHeaderProps> = ({
       })
     }
   }
+  // 撤销
+  const undoHander = useCallback(() => {
+    if (pastPage.length) {
+      undoLargeScreen()
+    }
+  }, [pastPage.length])
+  // 恢复
+  const redoHandler = useCallback(() => {
+    if (futurePage.length) {
+      redoLargeScreen()
+    }
+  }, [futurePage.length])
+
+  useEffect(() => {
+    const keyupHander = (e: any) => {
+      if (e.ctrlKey && e.keyCode === 90) {
+        if (e.altKey) {
+          // 恢复
+          redoHandler()
+        } else {
+          // 撤销
+          undoHander()
+        }
+      }
+    }
+    document.addEventListener('keyup', keyupHander)
+
+    return () => {
+      document.removeEventListener('keyup', keyupHander)
+    }
+  }, [undoHander, redoHandler])
 
   return (
     <div className='app-screen-disign__header'>
@@ -97,11 +127,7 @@ const DesignHeader: FC<IDesignHeaderProps> = ({
           </Tooltip>
         </li>
         <li
-          onClick={() => {
-            if (pastPage.length) {
-              undoLargeScreen()
-            }
-          }}
+          onClick={undoHander}
           className={`${!pastPage.length ? 'is-disabled' : ''}`}>
           <Tooltip title="撤销(ctrl+z)" placement="bottom">
             <RotateLeftOutlined />
@@ -109,13 +135,9 @@ const DesignHeader: FC<IDesignHeaderProps> = ({
           </Tooltip>
         </li>
         <li
-          onClick={() => {
-            if (futurePage.length) {
-              redoLargeScreen()
-            }
-          }}
+          onClick={redoHandler}
           className={`${!futurePage.length ? 'is-disabled' : ''}`}>
-          <Tooltip title="恢复(ctrl+shift+z)" placement="bottom">
+          <Tooltip title="恢复(ctrl+alt+z)" placement="bottom">
             <RotateRightOutlined />
             <p>恢复</p>
           </Tooltip>

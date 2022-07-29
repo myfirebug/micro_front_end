@@ -1,10 +1,15 @@
 @include b(screen-disign) {
     @include e(body) {
         @include m(left) {
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            z-index: 101;
             width: 200px;
             background-color: #535353;
             border-right: 1px solid rgba(0, 0, 0, .8);
-            overflow: hidden;
+            transition: all .25s ease 0s;
             .header {
                 height: 30px;
                 padding: 0 10px;
@@ -17,6 +22,9 @@
             }
             .body {
                 padding: 10px;
+            }
+            .page {
+                overflow: hidden;
             }
             .page-item {
                 display: flex;
@@ -57,6 +65,29 @@
                     &:hover {
                         background-color: #1890ff;
                     }
+                }
+            }
+            .operation {
+                width: 30px;
+                height: 30px;
+                background: #535353;
+                position: absolute;
+                top: 50%;
+                right: -30px;
+                margin-top: -15px;
+                padding-left: 5px;
+                border: 1px solid rgba(0, 0, 0, 0.8);
+                border-left-color: transparent;
+                border-top-right-radius: 15px;
+                border-bottom-right-radius: 15px;
+                box-shadow: 4px 0 7px rgba(0, 0, 0, .3);
+                cursor: pointer;
+                color: rgba(255, 255, 255, .6);
+                line-height: 30px;
+                font-size: 16px;
+                transition: all .25s ease 0s;
+                &:hover {
+                    color: #fff;
                 }
             }
         }

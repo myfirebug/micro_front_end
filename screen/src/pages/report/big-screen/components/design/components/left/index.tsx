@@ -1,11 +1,11 @@
-import {
+import React, {
   FC, MouseEvent, useState
 } from 'react'
 import './index.scss'
 import { Button, message, Modal, Tooltip } from 'antd'
 import { PlusOutlined } from '@ant-design/icons'
 import { IPage } from '@src/store/actionType'
-import { FormOutlined, DeleteOutlined, ExclamationCircleOutlined } from '@ant-design/icons'
+import { FormOutlined, DeleteOutlined, ExclamationCircleOutlined, LeftOutlined, RightOutlined } from '@ant-design/icons'
 
 // 新增页面表单
 import AddOrEditPage from '../add-or-edit-page'
@@ -17,6 +17,8 @@ interface IDesignBodyLeftProps {
   modifyLargeScreenPage: (id: string, data: IPage, callback?: Function) => void;
   changeLargeScreenPage: (id: string, callback?: Function) => void;
   currentPageId?: string;
+  setLeftFlag: React.Dispatch<React.SetStateAction<boolean>>;
+  leftFlag: Boolean;
 }
 
 const DesignBodyLeft: FC<IDesignBodyLeftProps> = ({
@@ -25,7 +27,9 @@ const DesignBodyLeft: FC<IDesignBodyLeftProps> = ({
   delLargeScreenPage,
   modifyLargeScreenPage,
   changeLargeScreenPage,
-  currentPageId
+  currentPageId,
+  leftFlag,
+  setLeftFlag
 }) => {
 
   // 弹窗参数
@@ -63,7 +67,9 @@ const DesignBodyLeft: FC<IDesignBodyLeftProps> = ({
   }
 
   return (
-    <div className='app-screen-disign__body--left'>
+    <div className='app-screen-disign__body--left' style={{
+      left: leftFlag ? 0 : -200
+    }}>
       {/* 新增编辑页面弹窗 */}
       <Modal
         title={modal.title}
@@ -132,6 +138,13 @@ const DesignBodyLeft: FC<IDesignBodyLeftProps> = ({
           ))
         }
       </ul>
+      <div
+        onClick={() => setLeftFlag(!leftFlag)}
+        className="operation">
+        {
+          leftFlag ? <LeftOutlined /> : <RightOutlined />
+        }
+      </div>
     </div>
   )
 }

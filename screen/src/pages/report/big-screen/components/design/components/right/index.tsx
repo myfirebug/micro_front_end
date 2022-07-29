@@ -1,13 +1,13 @@
-import {
+import React, {
   FC, useEffect, useState
 } from 'react'
 import './index.scss'
 import { Tabs, Form, Input, InputNumber, FormInstance, Row, Col, Select, Collapse, Switch, Slider } from 'antd'
 import { pageConfigure, coordinateConfigure } from '@src/widget/tools'
 import { SketchPicker } from 'react-color'
-import { IScreen, IWidget } from '@src/store/actionType'
-import { debounce } from '@src/utils/tools'
-import { StringGradients } from 'antd/lib/progress/progress'
+import { IPage, IScreen, IWidget } from '@src/store/actionType'
+import Wrapper from '@src/components/wrapper'
+import { LeftOutlined, RightOutlined } from '@ant-design/icons'
 
 const { TextArea } = Input
 const { TabPane } = Tabs
@@ -20,6 +20,9 @@ interface IDesignBodyRightProps {
   currentWidgetId: string;
   currentWidget: IWidget;
   modifyLargeScreenElement: (id: string, data: IWidget, callback?: Function) => void;
+  currentPage: IPage;
+  setRightFlag: React.Dispatch<React.SetStateAction<boolean>>;
+  rightFlag: Boolean;
 }
 
 const DesignBodyRight: FC<IDesignBodyRightProps> = ({
@@ -27,7 +30,10 @@ const DesignBodyRight: FC<IDesignBodyRightProps> = ({
   modifyScreen,
   currentWidgetId,
   currentWidget,
-  modifyLargeScreenElement
+  modifyLargeScreenElement,
+  currentPage,
+  setRightFlag,
+  rightFlag
 }) => {
   const [key, setKey] = useState('1')
   // 配置from
@@ -220,17 +226,19 @@ const DesignBodyRight: FC<IDesignBodyRightProps> = ({
       }
       if (judgeType(item, '[object Array]')) {
         return (
-          <Collapse accordion key={index}>
-            {
-              item.map((subItem: any, subIndex: number) => (
-                <Panel header={subItem.name} key={subIndex}>
-                  {
-                    renderDynamicForm(subItem.list, form, callback, field)
-                  }
-                </Panel>
-              ))
-            }
-          </Collapse>
+          <div key={index}>
+            <Collapse accordion>
+              {
+                item.map((subItem: any, subIndex: number) => (
+                  <Panel header={subItem.name} key={subIndex}>
+                    {
+                      renderDynamicForm(subItem.list, form, callback, field)
+                    }
+                  </Panel>
+                ))
+              }
+            </Collapse>
+          </div>
         )
       }
     })
@@ -245,14 +253,36 @@ const DesignBodyRight: FC<IDesignBodyRightProps> = ({
   }, [currentWidgetId])
 
   return (
-    <div className='app-screen-disign__body--right'>
+    <div className='app-screen-disign__body--right' style={{
+      right: rightFlag ? 0 : -300
+    }}>
+      <div
+        onClick={() => setRightFlag(!rightFlag)}
+        className="operation">
+        {
+          rightFlag ? <LeftOutlined /> : <RightOutlined />
+        }
+      </div>
       <Tabs
         className='custom-tabs'
         activeKey={key}
         onChange={key => setKey(key)}
         destroyInactiveTabPane>
         <TabPane tab="图层" key="5">
-          Content of Tab Pane 4
+          <Wrapper
+            loading={false}
+            error={false}
+            nodata={Boolean((currentPage && currentPage.widgets && !currentPage.widgets.length))}>
+            <ul className="app-screen-disign__layer">
+              {
+                currentPage.widgets ? currentPage.widgets.map((item: any) => (
+                  <li
+                    key={item.id}
+                    className="app-screen-disign__layer--item">{item.label}</li>
+                )) : null
+              }
+            </ul>
+          </Wrapper>
         </TabPane>
         <TabPane tab="项目配置" key="1">
           <Form

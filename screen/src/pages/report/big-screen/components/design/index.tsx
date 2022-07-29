@@ -6,6 +6,7 @@ import React, {
 } from 'react'
 import { ALL_STATE, IPage, IScreen, IWidget } from '@store/actionType'
 import { connect } from 'react-redux'
+import { Slider } from 'antd'
 import {
   getLargeScreenPages,
   addLargeScreenPage,
@@ -81,6 +82,10 @@ const Disign: FC<IDisignProps> = ({
   const [elementsWrapperAttr, setElementsWrapperAttr] = useState<any>({})
   // 获取放大缩小比例
   const [cale, setCale] = useState(0)
+  // 显示隐藏左侧
+  const [leftFlag, setLeftFlag] = useState(true)
+  // 显示隐藏右侧
+  const [rightFlag, setRightFlag] = useState(true)
 
   // 这里主要设置默认的缩放比例
   useEffect(() => {
@@ -97,8 +102,11 @@ const Disign: FC<IDisignProps> = ({
       })
     }
     resizeHander()
+    // 绑定resize事件
     window.addEventListener('resize', resizeHander)
+
     return () => {
+      // 清除resize事件
       window.removeEventListener('resize', resizeHander)
     }
   }, [elementsWrapper.current])
@@ -120,6 +128,8 @@ const Disign: FC<IDisignProps> = ({
       <div className='app-screen-disign__body'>
         {/* 左边 */}
         <DesignBodyLeft
+          setLeftFlag={setLeftFlag}
+          leftFlag={leftFlag}
           pages={pages}
           addLargeScreenPage={addLargeScreenPage}
           delLargeScreenPage={delLargeScreenPage}
@@ -127,76 +137,78 @@ const Disign: FC<IDisignProps> = ({
           currentPageId={currentPage.id}
           changeLargeScreenPage={changeLargeScreenPage}
         />
-        <div className='app-screen-disign__body--center'>
-          <Ruler />
-          <div className="elements-wrapper" ref={elementsWrapper}>
-            <div
-              className="grid">
-              <svg xmlns="http://www.w3.org/2000/svg"
-                xmlnsXlink="http://www.w3.org/1999/xlink"
-                width="100%"
-                height="100%"
-                id="canvas">
-                <defs>
-                  <pattern
-                    patternUnits="userSpaceOnUse"
-                    id="p1"
-                    x="0"
-                    y="0"
-                    width="10"
-                    height="10"
-                  >
-                    <rect
-                      x="0"
-                      y="0"
-                      stroke="rgba(0,0,0,.8)"
-                      fill="none"
-                      width="10.5"
-                      height="10.5"
-                    ></rect>
-                  </pattern>
-                </defs>
-                <rect id="wrapper" x="0" y="0" fill="url(#p1)" width="100%" height="100%"></rect>
-              </svg>
-            </div>
+        <div
+          style={{
+            paddingLeft: leftFlag ? 200 : 0,
+            paddingRight: rightFlag ? 300 : 0
+          }}
+          className='app-screen-disign__body--center'>
+          <div
+            className="body"
+            ref={elementsWrapper}>
             {/* 
                 overflow: 'hidden',
                 transform: `scale(${cale})`,
                 transformOrigin: '0 0'
             */}
             <div
-              style={{
-                position: 'relative',
-                zIndex: 1,
-                width: screen.width,
-                height: screen.height,
-                backgroundColor: screen.backgroundColor
-              }}>
-              {
-                currentPage && currentPage.widgets ?
-                  currentPage.widgets.map((item: any, index: number) => {
-                    const Widget = components[item.code]
-                    if (Widget) {
-                      return (
-                        <div className='app-widget__wrap' key={index}>
-                          <Widget text={item.configureValue.elementValue} style={{
-                            ...item.configureValue,
-                            ...item.coordinateValue,
-                            fontSize: Number(item.configureValue.fontSize)
-                          }} />
-                        </div>
-                      )
-                    }
-                  }) : null
-              }
+              className='elements-wrap'>
+              <Ruler />
+              <div
+                style={{
+                  position: 'absolute',
+                  zIndex: 1,
+                  left: 66,
+                  top: 66,
+                  width: screen.width,
+                  height: screen.height,
+                  backgroundColor: screen.backgroundColor,
+                  overflow: 'hidden',
+                  transform: `scale(${cale})`,
+                  transformOrigin: '0 0'
+                }}>
+                {
+                  currentPage && currentPage.widgets ?
+                    currentPage.widgets.map((item: any, index: number) => {
+                      const Widget = components[item.code]
+                      if (Widget) {
+                        return (
+                          <div className='app-widget__item' key={index}>
+                            <Widget text={item.configureValue.elementValue} style={{
+                              ...item.configureValue,
+                              ...item.coordinateValue,
+                              textShadow: `${item.configureValue.textShadowX}px ${item.configureValue.textShadowY}px ${item.configureValue.textShadowF}px ${item.configureValue.textShadowC}`,
+                              fontSize: Number(item.configureValue.fontSize)
+                            }} />
+                          </div>
+                        )
+                      }
+                    }) : null
+                }
+              </div>
             </div>
+          </div>
+          <div className="footer">
+            <span>缩放比例：</span>
+            <Slider
+              style={{
+                width: 300
+              }}
+              min={5}
+              max={100}
+              tipFormatter={(value) => `${value}%`}
+              onChange={(value) => setCale(value / 100)}
+              value={cale * 100} />
           </div>
         </div>
         {/* 右边 */}
         {
           pages.length ?
             <DesignBodyRight
+              rightFlag={rightFlag}
+              setRightFlag={setRightFlag}
               screen={screen}
+              currentPage={currentPage}
               modifyLargeScreenElement={modifyLargeScreenElement}
               modifyScreen={modifyScreen}
               currentWidget={currentWidget}

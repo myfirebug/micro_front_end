@@ -1,9 +1,20 @@
 @include b(screen-disign) {
     @include e(body) {
         @include m(right) {
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 101;
             width: 300px;
             background-color: #535353;
             border-left: 1px solid rgba(0, 0, 0, .8);
+            transition: all .25s ease 0s;
+            .ant-tabs-content {
+                height: calc(100vh - 100px);
+                overflow: hidden;
+                overflow-y: auto;
+            }
             textarea::placeholder,
             input::placeholder {
                 color: rgba(255, 255, 255, .1)
@@ -39,7 +50,7 @@
                 margin-bottom: 14px;
             }
             .ant-form-item-label>label {
-                color: rgba(255, 255, 255, .5);
+                color: rgba(255, 255, 255, .6);
             }
             .ant-select-selector,
             .ant-input-affix-wrapper,
@@ -57,7 +68,7 @@
                 border: none;
                 &-header {
                     padding: 8px 10px!important;
-                    color: rgba(255, 255, 255, 0.5)!important;
+                    color: rgba(255, 255, 255, 0.6)!important;
                     border-top: 1px solid #383838;
                 }
                 &-item {
@@ -93,6 +104,29 @@
                     right: 0;
                     z-index: 100;
                     display: none;
+                }
+            }
+            .operation {
+                width: 30px;
+                height: 30px;
+                background: #535353;
+                position: absolute;
+                top: 50%;
+                left: -30px;
+                margin-top: -15px;
+                padding-left: 10px;
+                border: 1px solid rgba(0, 0, 0, 0.8);
+                border-right-color: transparent;
+                border-top-left-radius: 15px;
+                border-bottom-left-radius: 15px;
+                box-shadow: -4px 0 7px rgba(0, 0, 0, .3);
+                cursor: pointer;
+                color: rgba(255, 255, 255, .6);
+                line-height: 30px;
+                font-size: 16px;
+                transition: all .25s ease 0s;
+                &:hover {
+                    color: #fff;
                 }
             }
         }

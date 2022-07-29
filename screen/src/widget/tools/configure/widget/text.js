@@ -4,7 +4,6 @@ const text = {
     label: '文本',
     // 配置项值
     configureValue: {
-        elementName: '文本框',
         elementValue: '文本框',
         fontSize: 26,
         letterSpacing: 0,
@@ -12,22 +11,20 @@ const text = {
         textAlign: 'center',
         backgroundColor: '',
         lineHeight: 1,
-        a: true,
-        b: 50,
-        c: 0,
-        d: 0,
-        xcolor: '',
-        ycolor: ''
+        textShadowX: 0,
+        textShadowY: 0,
+        textShadowF: 0,
+        textShadowC: '',
+        borderStyle: 'none',
+        borderWidth: 0,
+        borderColor: '',
+        borderTopLeftRadius: 0,
+        borderTopRightRadius: 0,
+        borderBottomLeftRadius: 0,
+        borderBottomRightRadius: 0
     },
     // 基础配置项
     configure: [{
-            type: 'Input',
-            label: '图层名称',
-            name: 'elementName',
-            required: false,
-            placeholder: ''
-        },
-        {
             type: 'Input',
             label: '文本内容',
             name: 'elementValue',
@@ -96,56 +93,105 @@ const text = {
             placeholder: '请选择背景颜色'
         },
         [{
-                name: '柱体设置',
-                list: [{
-                        type: 'Switch',
-                        label: '最大宽度',
-                        name: 'a',
-                        required: false,
-                        placeholder: ''
-                    },
-                    {
-                        type: 'Slider',
-                        label: '最大宽度',
-                        name: 'b',
-                        required: false,
-                        placeholder: ''
-                    },
-                    {
-                        type: 'SketchPicker',
-                        label: '字体颜色',
-                        name: 'xcolor',
-                        required: false,
-                        placeholder: '请选择字体颜色'
-                    }
-                ]
-            },
-            {
-                name: '柱体设置',
-                list: [{
-                        type: 'Input',
-                        label: '最大宽度',
-                        name: 'c',
-                        required: false,
-                        placeholder: ''
-                    },
-                    {
-                        type: 'Input',
-                        label: '最大宽度',
-                        name: 'd',
-                        required: false,
-                        placeholder: ''
-                    },
-                    {
-                        type: 'SketchPicker',
-                        label: '字体颜色',
-                        name: 'ycolor',
-                        required: false,
-                        placeholder: '请选择字体颜色'
-                    }
-                ]
-            }
-        ]
+            name: '文字阴影',
+            list: [{
+                    type: 'InputNumber',
+                    label: 'X轴偏移',
+                    name: 'textShadowX',
+                    required: false,
+                    placeholder: '请输入X轴偏移'
+                },
+                {
+                    type: 'InputNumber',
+                    label: 'Y轴偏移',
+                    name: 'textShadowY',
+                    required: false,
+                    placeholder: '请输入Y轴偏移'
+                },
+                {
+                    type: 'InputNumber',
+                    label: '模糊值',
+                    name: 'textShadowF',
+                    required: false,
+                    placeholder: '请输入模糊值'
+                },
+                {
+                    type: 'SketchPicker',
+                    label: '颜色',
+                    name: 'textShadowC',
+                    required: false,
+                    placeholder: '请选择颜色'
+                }
+            ]
+        }],
+        [{
+            name: '边框',
+            list: [{
+                    type: 'Select',
+                    label: '边框样式',
+                    name: 'borderStyle',
+                    required: false,
+                    placeholder: '请选择边框样式',
+                    options: [
+                        { code: 'none', name: '无' },
+                        { code: 'solid', name: '直线' },
+                        { code: 'dashed', name: '破折线' },
+                        { code: 'dotted', name: '点状线' },
+                        { code: 'double', name: '双划线' },
+                        { code: 'groove', name: '3D凹槽' },
+                        { code: 'ridge', name: '3D垄状' },
+                        { code: 'inset', name: '3D内嵌' },
+                        { code: 'outset', name: '3D外嵌' }
+                    ]
+                },
+                {
+                    type: 'InputNumber',
+                    label: '边框尺寸',
+                    name: 'borderWidth',
+                    required: false,
+                    placeholder: '请输入尺寸'
+                },
+                {
+                    type: 'SketchPicker',
+                    label: '颜色',
+                    name: 'borderColor',
+                    required: false,
+                    placeholder: '请选择边框颜色'
+                }
+            ]
+        }],
+        [{
+            name: '圆角',
+            list: [{
+                    type: 'InputNumber',
+                    label: '左上',
+                    name: 'borderTopLeftRadius',
+                    required: false,
+                    placeholder: '请输入尺寸'
+                },
+                {
+                    type: 'InputNumber',
+                    label: '右上',
+                    name: 'borderTopRightRadius',
+                    required: false,
+                    placeholder: '请输入尺寸'
+                },
+                {
+                    type: 'InputNumber',
+                    label: '左下',
+                    name: 'borderBottomLeftRadius',
+                    required: false,
+                    placeholder: '请输入尺寸'
+                },
+                {
+                    type: 'InputNumber',
+                    label: '右下',
+                    name: 'borderBottomRightRadius',
+                    required: false,
+                    placeholder: '请输入尺寸'
+                }
+            ]
+        }]
     ],
     // 坐标值
     coordinateValue: {

@@ -167,7 +167,7 @@ const BigScreen: FC<IBigScreenProps> = () => {
         }}
         bodyStyle={{
           padding: 0,
-          background: 'rgb(40,40,40)'
+          background: '#535353'
         }}
         onClose={() => setDrawer((state: any) => ({
           ...state,

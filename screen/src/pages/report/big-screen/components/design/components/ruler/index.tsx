@@ -11,9 +11,24 @@ const Ruler: FC<IRulerProps> = () => {
 
 
   return (
-    <div className="app-screen-disign__ruler">
+    <div
+      className="app-screen-disign__ruler">
       <div className='app-screen-disign__ruler--hwrapper'>
-        <div className="app-screen-disign__ruler--h">
+        <div
+          className="app-screen-disign__ruler--h">
+          <span className='ruler-h-50'>
+            <b>50</b>
+            <i></i>
+            <i></i>
+            <i></i>
+            <i></i>
+            <i></i>
+            <i></i>
+            <i></i>
+            <i></i>
+            <i></i>
+            <i></i>
+          </span>
           {
             arr.map((item: any, index: number) => (
               <span className='ruler-h-50' key={index}>
@@ -34,7 +49,21 @@ const Ruler: FC<IRulerProps> = () => {
         </div>
       </div>
       <div className='app-screen-disign__ruler--vwrapper'>
-        <div className="app-screen-disign__ruler--v">
+        <div
+          className="app-screen-disign__ruler--v">
+          <span className='ruler-h-50'>
+            <b>50</b>
+            <i></i>
+            <i></i>
+            <i></i>
+            <i></i>
+            <i></i>
+            <i></i>
+            <i></i>
+            <i></i>
+            <i></i>
+            <i></i>
+          </span>
           {
             arr.map((item: any, index: number) => (
               <span className='ruler-h-50' key={index}>
