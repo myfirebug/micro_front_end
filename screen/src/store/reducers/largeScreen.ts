@@ -9,6 +9,7 @@ import {
 	ADD_LARGESCREEN_ELEMENT,
 	DEL_LARGESCREEN_ELEMENT,
 	MODIFY_LARGESCREEN_ELEMENT,
+	CHANGE_LARGESCREEN_ELEMENET,
 	UNDO_LARGESCREEN,
 	REDO_LARGESCREEN,
 	LARGESCREEN_STATE,
@@ -137,7 +138,7 @@ export const largeScreen = (
 			return copy;
 		// 修改元素
 		case MODIFY_LARGESCREEN_ELEMENT: {
-			const currentPage: IPage = { ...copy.currentPage };
+			const currentPage: IPage = copy.currentPage;
 			currentPage.widgets = currentPage.widgets.map((item) => {
 				if (item.id === action.id) {
 					return action.data;
@@ -150,6 +151,21 @@ export const largeScreen = (
 				currentPage: currentPage,
 				currentWidget: action.data
 			};
+		}
+		// 切换元素
+		case CHANGE_LARGESCREEN_ELEMENET: {
+			const currentPage: IPage = { ...copy.currentPage };
+			const index = currentPage.widgets.findIndex(
+				(item) => item.id === action.id
+			);
+			if (index !== -1) {
+				return {
+					...copy,
+					currentWidgetId: action.id,
+					currentWidget: currentPage.widgets[index]
+				};
+			}
+			return copy;
 		}
 		// 撤销
 		case UNDO_LARGESCREEN: {

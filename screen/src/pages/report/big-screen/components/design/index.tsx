@@ -18,7 +18,8 @@ import {
   undoLargeScreen,
   redoLargeScreen,
   modifyScreen,
-  changeLargeScreenPage
+  changeLargeScreenPage,
+  changeLargeScreenElement
 } from '@store/actions/largeScreen'
 
 
@@ -47,6 +48,7 @@ interface IDisignProps {
   changeLargeScreenPage: (id: string, callback?: Function) => void;
   addLargeScreenElement: (data: any) => void;
   modifyLargeScreenElement: (id: string, data: IWidget, callback?: Function) => void;
+  changeLargeScreenElement: (id: string, callback?: Function) => void;
   currentPage: IPage;
   currentWidgetId: string;
   currentWidget: IWidget;
@@ -74,7 +76,8 @@ const Disign: FC<IDisignProps> = ({
   pastPage,
   futurePage,
   undoLargeScreen,
-  redoLargeScreen
+  redoLargeScreen,
+  changeLargeScreenElement
 }) => {
 
   // 获取装组件的盒子，这里需要获取他的宽度
@@ -175,18 +178,29 @@ const Disign: FC<IDisignProps> = ({
                       if (Widget) {
                         return (
                           <div
-                            className='app-widget__item'
+                            onClick={() => changeLargeScreenElement(item.id)}
+                            className={`app-widget__item ${item.id === currentWidgetId ? 'is-active' : ''}`}
                             key={index}>
-                            {
-                              currentWidgetId === item.id ?
-                                <div className="mask" style={{
-                                  ...item.coordinateValue
-                                }}>
-                                  <div className='line-top'></div>
-                                  <div className='line-left'></div>
-                                  <div className="label">{item.coordinateValue.left},{item.coordinateValue.top}</div>
-                                </div> : null
-                            }
+                            <div className="mask" style={{
+                              ...item.coordinateValue
+                            }}>
+                              {/* 辅助线 */}
+                              <div className='line-top'></div>
+                              <div className='line-left'></div>
+                              {/* 坐标值 */}
+                              <div className="label">{item.coordinateValue.left},{item.coordinateValue.top}</div>
+                              {/* 拖动框 */}
+                              <div className="draggable">
+                                <div className="left-top"></div>
+                                <div className="left-center"></div>
+                                <div className="left-bottom"></div>
+                                <div className="right-top"></div>
+                                <div className="right-center"></div>
+                                <div className="right-bottom"></div>
+                                <div className="top-center"></div>
+                                <div className="bottom-center"></div>
+                              </div>
+                            </div>
                             <Widget text={item.configureValue.elementValue} style={{
                               ...item.configureValue,
                               ...item.coordinateValue,
@@ -255,7 +269,8 @@ const mapDispatchToProps = {
   undoLargeScreen,
   redoLargeScreen,
   modifyScreen,
-  changeLargeScreenPage
+  changeLargeScreenPage,
+  changeLargeScreenElement
 };
 
 

@@ -17,6 +17,8 @@ import {
 	DEL_LARGESCREEN_ELEMENT_TYPE,
 	MODIFY_LARGESCREEN_ELEMENT,
 	MODIFY_LARGESCREEN_ELEMENT_TYPE,
+	CHANGE_LARGESCREEN_ELEMENET,
+	CHANGE_LARGESCREEN_ELEMENET_TYPE,
 	UNDO_LARGESCREEN,
 	UNDO_LARGESCREEN_TYPE,
 	REDO_LARGESCREEN,
@@ -82,6 +84,12 @@ export interface IModifyLargeScreenElementAction {
 	data: IWidget;
 }
 
+// 切换元素
+export interface IChangeLargeScreenElementAction {
+	type: CHANGE_LARGESCREEN_ELEMENET_TYPE;
+	id: string;
+}
+
 // 撤销
 export interface IUndoLargeScreenAction {
 	type: UNDO_LARGESCREEN_TYPE;
@@ -102,6 +110,7 @@ export type ModifyAction =
 	| IAddLargeScreenElementAction
 	| IDelLargeScreenElementAction
 	| IModifyLargeScreenElementAction
+	| IChangeLargeScreenElementAction
 	| IUndoLargeScreenAction
 	| IRedoLargeScreenAction
 	| IModifyScreenAction;
@@ -168,6 +177,14 @@ const actionModifyLargeScreenElement = (
 	data
 });
 
+// 切换元素数据的方法
+const actionChangeLargeScreenElement = (
+	id: string
+): IChangeLargeScreenElementAction => ({
+	type: CHANGE_LARGESCREEN_ELEMENET,
+	id
+});
+
 // 撤销元素数据的方法
 const actionUndoLargeScreen = (): IUndoLargeScreenAction => ({
 	type: UNDO_LARGESCREEN
@@ -232,6 +249,13 @@ export const delLargeScreenElement = (id: string) => (dispatch: Dispatch) => {
 export const modifyLargeScreenElement =
 	(id: string, data: IWidget, callback?: Function) => (dispatch: Dispatch) => {
 		dispatch(actionModifyLargeScreenElement(id, data));
+		callback && callback();
+	};
+
+// 切换元素数据
+export const changeLargeScreenElement =
+	(id: string, callback?: Function) => (dispatch: Dispatch) => {
+		dispatch(actionChangeLargeScreenElement(id));
 		callback && callback();
 	};
 
