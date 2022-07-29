@@ -123,7 +123,9 @@ const Disign: FC<IDisignProps> = ({
         pastPage={pastPage}
         futurePage={futurePage}
         currentWidgetId={currentWidgetId}
-        setDrawer={setDrawer} />
+        modifyLargeScreenElement={modifyLargeScreenElement}
+        setDrawer={setDrawer}
+        currentWidget={currentWidget} />
       {/* 内容区 */}
       <div className='app-screen-disign__body'>
         {/* 左边 */}
@@ -140,7 +142,7 @@ const Disign: FC<IDisignProps> = ({
         <div
           style={{
             paddingLeft: leftFlag ? 200 : 0,
-            paddingRight: rightFlag ? 300 : 0
+            paddingRight: rightFlag && pages.length ? 300 : 0
           }}
           className='app-screen-disign__body--center'>
           <div
@@ -163,7 +165,6 @@ const Disign: FC<IDisignProps> = ({
                   width: screen.width,
                   height: screen.height,
                   backgroundColor: screen.backgroundColor,
-                  overflow: 'hidden',
                   transform: `scale(${cale})`,
                   transformOrigin: '0 0'
                 }}>
@@ -173,7 +174,19 @@ const Disign: FC<IDisignProps> = ({
                       const Widget = components[item.code]
                       if (Widget) {
                         return (
-                          <div className='app-widget__item' key={index}>
+                          <div
+                            className='app-widget__item'
+                            key={index}>
+                            {
+                              currentWidgetId === item.id ?
+                                <div className="mask" style={{
+                                  ...item.coordinateValue
+                                }}>
+                                  <div className='line-top'></div>
+                                  <div className='line-left'></div>
+                                  <div className="label">{item.coordinateValue.left},{item.coordinateValue.top}</div>
+                                </div> : null
+                            }
                             <Widget text={item.configureValue.elementValue} style={{
                               ...item.configureValue,
                               ...item.coordinateValue,

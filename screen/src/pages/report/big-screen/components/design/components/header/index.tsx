@@ -19,7 +19,7 @@ import { widgetConfigure } from '@src/widget/tools'
 import { componentsClassify } from '@src/widget'
 import { guid } from '@src/utils/tools'
 import './index.scss'
-import { IPage } from '@src/store/actionType'
+import { IPage, IWidget } from '@src/store/actionType'
 
 interface IDesignHeaderProps {
   drawer: any;
@@ -27,10 +27,12 @@ interface IDesignHeaderProps {
   addLargeScreenElement: (data: any) => void;
   pastPage: IPage[];
   futurePage: IPage[];
-  currentWidgetId?: string;
-  currentPageId?: string;
+  currentWidgetId: string;
+  currentWidget: IWidget;
+  currentPageId: string;
   undoLargeScreen: () => void;
   redoLargeScreen: () => void;
+  modifyLargeScreenElement: (id: string, data: IWidget, callback?: Function) => void;
 }
 
 const DesignHeader: FC<IDesignHeaderProps> = ({
@@ -40,8 +42,10 @@ const DesignHeader: FC<IDesignHeaderProps> = ({
   pastPage,
   futurePage,
   currentWidgetId,
+  currentWidget,
   undoLargeScreen,
-  redoLargeScreen
+  redoLargeScreen,
+  modifyLargeScreenElement
 }) => {
   // 向页面添加组件
   const addElement = (code: string) => {
@@ -62,23 +66,67 @@ const DesignHeader: FC<IDesignHeaderProps> = ({
     if (pastPage.length) {
       undoLargeScreen()
     }
-  }, [pastPage.length])
+  }, [pastPage.length, undoLargeScreen])
   // 恢复
   const redoHandler = useCallback(() => {
     if (futurePage.length) {
       redoLargeScreen()
     }
-  }, [futurePage.length])
+  }, [futurePage.length, redoLargeScreen])
+
+  // 移动上移下移左移右移
+  const moveHander = useCallback((field: 'top' | 'left' | 'bottom' | 'right') => {
+    console.log(currentWidgetId, currentWidget)
+    if (currentWidgetId) {
+      const newCurrentWidget = JSON.parse(JSON.stringify(currentWidget))
+      switch (field) {
+        case 'top':
+          newCurrentWidget.coordinateValue.top = newCurrentWidget.coordinateValue.top - 10
+          break
+        case 'left':
+          newCurrentWidget.coordinateValue.left = newCurrentWidget.coordinateValue.left - 10
+          break
+        case 'bottom': newCurrentWidget.coordinateValue.top = newCurrentWidget.coordinateValue.top + 10
+          break
+        default:
+          newCurrentWidget.coordinateValue.left = newCurrentWidget.coordinateValue.left + 10
+      }
+      modifyLargeScreenElement(currentWidgetId, newCurrentWidget)
+    }
+  }, [currentWidgetId, currentWidget, modifyLargeScreenElement])
 
   useEffect(() => {
     const keyupHander = (e: any) => {
-      if (e.ctrlKey && e.keyCode === 90) {
-        if (e.altKey) {
-          // 恢复
-          redoHandler()
-        } else {
-          // 撤销
-          undoHander()
+      if (e.ctrlKey) {
+        console.log(e.keyCode)
+        switch (e.keyCode) {
+          case 90:
+            if (e.altKey) {
+              // 恢复
+              redoHandler()
+            } else {
+              // 撤销
+              undoHander()
+            }
+            break
+          // 左移
+          case 37:
+            moveHander('left')
+            break
+          // 上移
+          case 38:
+            moveHander('top')
+            break
+          // 右移
+          case 39:
+            moveHander('right')
+            break
+          // 下移
+          case 40:
+            moveHander('bottom')
+            break
+
+          default:
         }
       }
     }
@@ -87,7 +135,7 @@ const DesignHeader: FC<IDesignHeaderProps> = ({
     return () => {
       document.removeEventListener('keyup', keyupHander)
     }
-  }, [undoHander, redoHandler])
+  }, [undoHander, redoHandler, moveHander])
 
   return (
     <div className='app-screen-disign__header'>
@@ -142,26 +190,34 @@ const DesignHeader: FC<IDesignHeaderProps> = ({
             <p>恢复</p>
           </Tooltip>
         </li>
-        <li className={`${!currentWidgetId ? 'is-disabled' : ''}`}>
-          <Tooltip title="上移(↑)" placement="bottom">
+        <li
+          onClick={() => moveHander('top')}
+          className={`${!currentWidgetId ? 'is-disabled' : ''}`}>
+          <Tooltip title="上移(ctrl+↑)" placement="bottom">
             <ArrowUpOutlined />
             <p>上移</p>
           </Tooltip>
         </li>
-        <li className={`${!currentWidgetId ? 'is-disabled' : ''}`}>
-          <Tooltip title="下移(↓)" placement="bottom">
+        <li
+          onClick={() => moveHander('bottom')}
+          className={`${!currentWidgetId ? 'is-disabled' : ''}`}>
+          <Tooltip title="下移(ctrl+↓)" placement="bottom">
             <ArrowDownOutlined />
             <p>下移</p>
           </Tooltip>
         </li>
-        <li className={`${!currentWidgetId ? 'is-disabled' : ''}`}>
-          <Tooltip title="左移(←)" placement="bottom">
+        <li
+          onClick={() => moveHander('left')}
+          className={`${!currentWidgetId ? 'is-disabled' : ''}`}>
+          <Tooltip title="左移(ctrl+←)" placement="bottom">
             <ArrowLeftOutlined />
             <p>左移</p>
           </Tooltip>
         </li>
-        <li className={`${!currentWidgetId ? 'is-disabled' : ''}`}>
-          <Tooltip title="右移(→)" placement="bottom">
+        <li
+          onClick={() => moveHander('right')}
+          className={`${!currentWidgetId ? 'is-disabled' : ''}`}>
+          <Tooltip title="右移(ctrl+→)" placement="bottom">
             <ArrowRightOutlined />
             <p>右移</p>
           </Tooltip>
