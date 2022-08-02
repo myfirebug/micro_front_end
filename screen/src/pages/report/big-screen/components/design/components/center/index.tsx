@@ -13,6 +13,7 @@ interface IDesignBodyCenterProps {
   cale: number;
   modifyLargeScreenElement: (id: string, data: IWidget, callback?: Function) => void;
   changeLargeScreenElement: (id: string, callback?: Function) => void;
+  screen: any;
 }
 
 const DesignBodyCenter: FC<IDesignBodyCenterProps> = ({
@@ -21,8 +22,12 @@ const DesignBodyCenter: FC<IDesignBodyCenterProps> = ({
   modifyLargeScreenElement,
   changeLargeScreenElement,
   currentWidget,
-  cale
+  cale,
+  screen
 }) => {
+
+  console.log(screen, 'screen')
+
   // 移动时
   const dragStopHandle = (e: any, d: any) => {
     modifyLargeScreenElement(currentWidgetId, {
@@ -49,6 +54,35 @@ const DesignBodyCenter: FC<IDesignBodyCenterProps> = ({
   }
   return (
     <>
+      {
+        screen.gridFlag ?
+          <svg xmlns="http://www.w3.org/2000/svg"
+            xmlnsXlink="http://www.w3.org/1999/xlink"
+            width="100%"
+            height="100%"
+            id="canvas">
+            <defs>
+              <pattern
+                patternUnits="userSpaceOnUse"
+                id="p1"
+                x="0"
+                y="0"
+                width={screen.gridSize}
+                height={screen.gridSize}
+              >
+                <rect
+                  x="0"
+                  y="0"
+                  stroke={screen.gridBorderColor}
+                  fill="none"
+                  width={screen.gridSize + 0.5}
+                  height={screen.gridSize + 0.5}
+                ></rect>
+              </pattern>
+            </defs>
+            <rect id="wrapper" x="0" y="0" fill="url(#p1)" width="100%" height="100%"></rect>
+          </svg> : null
+      }
       {
         currentPage && currentPage.widgets ?
           currentPage.widgets.map((item: any, index: number) => {
@@ -152,11 +186,17 @@ const DesignBodyCenter: FC<IDesignBodyCenterProps> = ({
                       <div className="label">{item.coordinateValue.left},{item.coordinateValue.top}</div>
                     </div>
                     <Widget
+                      className={`${item.configureValue.animateName}`}
                       text={item.configureValue.elementValue}
                       style={{
                         ...item.configureValue,
                         width: '100%',
                         height: '100%',
+                        'animation-name': item.configureValue.animateName,
+                        'animation-timing-function': item.configureValue.animateTiming,
+                        'animation-delay': item.configureValue.animateDelay + 's',
+                        'animation-duration': item.configureValue.animateTime + 's',
+                        'animation-iteration-count': !item.configureValue.animateInfinite ? 1 : 'infinite',
                         textShadow: `${item.configureValue.textShadowX}px ${item.configureValue.textShadowY}px ${item.configureValue.textShadowF}px ${item.configureValue.textShadowC}`,
                         fontSize: Number(item.configureValue.fontSize)
                       }} />

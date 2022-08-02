@@ -1,3 +1,6 @@
+// 动画
+import animate from '../animate';
+
 const text = {
     code: 'widget-text',
     type: 'text',
@@ -21,7 +24,8 @@ const text = {
         borderTopLeftRadius: 0,
         borderTopRightRadius: 0,
         borderBottomLeftRadius: 0,
-        borderBottomRightRadius: 0
+        borderBottomRightRadius: 0,
+        ...animate.configureValue
     },
     // 基础配置项
     configure: [{
@@ -92,38 +96,41 @@ const text = {
             required: false,
             placeholder: '请选择背景颜色'
         },
-        [{
-            name: '文字阴影',
-            list: [{
-                    type: 'InputNumber',
-                    label: 'X轴偏移',
-                    name: 'textShadowX',
-                    required: false,
-                    placeholder: '请输入X轴偏移'
-                },
-                {
-                    type: 'InputNumber',
-                    label: 'Y轴偏移',
-                    name: 'textShadowY',
-                    required: false,
-                    placeholder: '请输入Y轴偏移'
-                },
-                {
-                    type: 'InputNumber',
-                    label: '模糊值',
-                    name: 'textShadowF',
-                    required: false,
-                    placeholder: '请输入模糊值'
-                },
-                {
-                    type: 'SketchPicker',
-                    label: '颜色',
-                    name: 'textShadowC',
-                    required: false,
-                    placeholder: '请选择颜色'
-                }
-            ]
-        }],
+        [
+            ...animate.configure,
+            {
+                name: '文字阴影',
+                list: [{
+                        type: 'InputNumber',
+                        label: 'X轴偏移',
+                        name: 'textShadowX',
+                        required: false,
+                        placeholder: '请输入X轴偏移'
+                    },
+                    {
+                        type: 'InputNumber',
+                        label: 'Y轴偏移',
+                        name: 'textShadowY',
+                        required: false,
+                        placeholder: '请输入Y轴偏移'
+                    },
+                    {
+                        type: 'InputNumber',
+                        label: '模糊值',
+                        name: 'textShadowF',
+                        required: false,
+                        placeholder: '请输入模糊值'
+                    },
+                    {
+                        type: 'SketchPicker',
+                        label: '颜色',
+                        name: 'textShadowC',
+                        required: false,
+                        placeholder: '请选择颜色'
+                    }
+                ]
+            }
+        ],
         [{
             name: '边框',
             list: [{

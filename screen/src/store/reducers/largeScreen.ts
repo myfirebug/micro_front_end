@@ -31,7 +31,10 @@ const initialState = {
 		height: 1080,
 		backgroundColor: '',
 		title: '大屏',
-		description: '描述'
+		description: '描述',
+		gridSize: 10,
+		gridBorderColor: '#ddd',
+		gridFlag: false
 	}
 };
 

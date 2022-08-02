@@ -168,6 +168,7 @@ const Disign: FC<IDisignProps> = ({
                   currentPage={currentPage}
                   currentWidgetId={currentWidgetId}
                   cale={cale}
+                  screen={screen}
                   changeLargeScreenElement={changeLargeScreenElement}
                   currentWidget={currentWidget}
                   modifyLargeScreenElement={modifyLargeScreenElement} />

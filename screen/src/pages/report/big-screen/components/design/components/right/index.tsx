@@ -95,6 +95,7 @@ const DesignBodyRight: FC<IDesignBodyRightProps> = ({
                 rules={[{ required: item.require }]}
               >
                 <Input
+                  allowClear
                   onBlur={e => onChangeHandler(callback, item.name, e.target.value, field)}
                   placeholder={item.placeholder} />
               </Form.Item>
@@ -120,6 +121,7 @@ const DesignBodyRight: FC<IDesignBodyRightProps> = ({
                 rules={[{ required: item.require }]}
               >
                 <TextArea
+                  allowClear
                   onBlur={e => onChangeHandler(callback, item.name, e.target.value, field)}
                   rows={8}
                   placeholder={item.placeholder} />
@@ -154,7 +156,8 @@ const DesignBodyRight: FC<IDesignBodyRightProps> = ({
                 rules={[{ required: item.require }]}
               >
                 <Select
-                  onSelect={(value: string) => onChangeHandler(callback, item.name, value, field)}
+                  allowClear
+                  onChange={(value: string) => onChangeHandler(callback, item.name, value, field)}
                   placeholder={item.placeholder}>
                   {
                     item.options.map((item: any) => (
