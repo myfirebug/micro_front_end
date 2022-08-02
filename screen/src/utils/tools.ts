@@ -580,5 +580,29 @@ export const throttle = (
 	};
 };
 
+/**
+ * 获取元素的绝对位置
+ * @param ele dom元素
+ * @returns
+ */
+export const getElementPagePosition = (ele: any) => {
+	//计算x坐标
+	let actualLeft = ele.offsetLeft;
+	let currentLeft = ele.offsetParent;
+	while (currentLeft !== null) {
+		actualLeft += currentLeft.offsetLeft;
+		currentLeft = currentLeft.offsetParent;
+	}
+	//计算y坐标
+	let actualTop = ele.offsetTop;
+	let currentTop = ele.offsetParent;
+	while (currentTop !== null) {
+		actualTop += currentTop.offsetTop + currentTop.clientTop;
+		currentTop = currentTop.offsetParent;
+	}
+	//返回结果
+	return { x: actualLeft, y: actualTop };
+};
+
 // 路由前缀，主要用于部署时
 export const routePrefix = '/manamage';

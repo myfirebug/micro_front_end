@@ -29,10 +29,10 @@ import DesignHeader from './components/header'
 import DesignBodyLeft from './components/left'
 // 主题右边
 import DesignBodyRight from './components/right'
-// 所有组件地址
-import components from '@src/widget'
 // 尺子
 import Ruler from './components/ruler'
+// 拖动区域
+import DesignBodyCenter from './components/center'
 
 import './index.scss'
 
@@ -79,7 +79,6 @@ const Disign: FC<IDisignProps> = ({
   redoLargeScreen,
   changeLargeScreenElement
 }) => {
-
   // 获取装组件的盒子，这里需要获取他的宽度
   const elementsWrapper = useRef<HTMLDivElement>(null)
   const [elementsWrapperAttr, setElementsWrapperAttr] = useState<any>({})
@@ -113,7 +112,6 @@ const Disign: FC<IDisignProps> = ({
       window.removeEventListener('resize', resizeHander)
     }
   }, [elementsWrapper.current])
-
   return (
     <div className='app-screen-disign'>
       {/* 头部 */}
@@ -151,11 +149,6 @@ const Disign: FC<IDisignProps> = ({
           <div
             className="body"
             ref={elementsWrapper}>
-            {/* 
-                overflow: 'hidden',
-                transform: `scale(${cale})`,
-                transformOrigin: '0 0'
-            */}
             <div
               className='elements-wrap'>
               <Ruler />
@@ -171,47 +164,13 @@ const Disign: FC<IDisignProps> = ({
                   transform: `scale(${cale})`,
                   transformOrigin: '0 0'
                 }}>
-                {
-                  currentPage && currentPage.widgets ?
-                    currentPage.widgets.map((item: any, index: number) => {
-                      const Widget = components[item.code]
-                      if (Widget) {
-                        return (
-                          <div
-                            onClick={() => changeLargeScreenElement(item.id)}
-                            className={`app-widget__item ${item.id === currentWidgetId ? 'is-active' : ''}`}
-                            key={index}>
-                            <div className="mask" style={{
-                              ...item.coordinateValue
-                            }}>
-                              {/* 辅助线 */}
-                              <div className='line-top'></div>
-                              <div className='line-left'></div>
-                              {/* 坐标值 */}
-                              <div className="label">{item.coordinateValue.left},{item.coordinateValue.top}</div>
-                              {/* 拖动框 */}
-                              <div className="draggable">
-                                <div className="left-top"></div>
-                                <div className="left-center"></div>
-                                <div className="left-bottom"></div>
-                                <div className="right-top"></div>
-                                <div className="right-center"></div>
-                                <div className="right-bottom"></div>
-                                <div className="top-center"></div>
-                                <div className="bottom-center"></div>
-                              </div>
-                            </div>
-                            <Widget text={item.configureValue.elementValue} style={{
-                              ...item.configureValue,
-                              ...item.coordinateValue,
-                              textShadow: `${item.configureValue.textShadowX}px ${item.configureValue.textShadowY}px ${item.configureValue.textShadowF}px ${item.configureValue.textShadowC}`,
-                              fontSize: Number(item.configureValue.fontSize)
-                            }} />
-                          </div>
-                        )
-                      }
-                    }) : null
-                }
+                <DesignBodyCenter
+                  currentPage={currentPage}
+                  currentWidgetId={currentWidgetId}
+                  cale={cale}
+                  changeLargeScreenElement={changeLargeScreenElement}
+                  currentWidget={currentWidget}
+                  modifyLargeScreenElement={modifyLargeScreenElement} />
               </div>
             </div>
           </div>

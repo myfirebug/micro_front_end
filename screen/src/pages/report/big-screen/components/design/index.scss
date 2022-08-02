@@ -11,6 +11,11 @@
             padding: 0 300px 0 200px;
             overflow: hidden;
             transition: all .25s ease 0s;
+            .react-draggable-disabled {
+                .handle {
+                    display: none;
+                }
+            }
             .body {
                 position: relative;
                 width: 100%;
@@ -46,6 +51,8 @@
 
 @include b(widget) {
     @include e(item) {
+        width: 100%;
+        height: 100%;
         &:hover {
             .mask {
                 display: block;
@@ -59,69 +66,12 @@
                 display: block;
             }
         }
-        .draggable {
-            display: none;
-            position: absolute;
-            left: 0;
-            top: 0;
-            bottom: 0;
-            right: 0;
-            z-index: 2;
-            border: dashed 2px #fff;
-            >div {
-                position: absolute;
-                width: 20px;
-                height: 20px;
-                background-color: #fff;
-                border-radius: 50%;
-            }
-            .left-top {
-                left: -10px;
-                top: -10px;
-                cursor: nwse-resize;
-            }
-            .left-bottom {
-                left: -10px;
-                bottom: -10px;
-                cursor: nesw-resize;
-            }
-            .left-center {
-                left: -10px;
-                top: 50%;
-                margin-top: -10px;
-                cursor: ew-resize;
-            }
-            .right-top {
-                right: -10px;
-                top: -10px;
-                cursor: nesw-resize;
-            }
-            .right-bottom {
-                right: -10px;
-                bottom: -10px;
-                cursor: nwse-resize;
-            }
-            .right-center {
-                right: -10px;
-                top: 50%;
-                margin-top: -10px;
-                cursor: ew-resize;
-            }
-            .top-center {
-                top: -10px;
-                left: 50%;
-                margin-left: -10px;
-            }
-            .bottom-center {
-                bottom: -10px;
-                left: 50%;
-                margin-left: -10px;
-            }
-        }
         .mask {
             display: none;
             position: absolute;
             z-index: 1;
+            width: 100%;
+            height: 100%;
             cursor: move;
             background: rgba(255, 255, 255, .5);
         }
@@ -154,3 +104,21 @@
         }
     }
 }
+
+// .react-resizable {
+//     >span {
+//         position: absolute;
+//         width: 20px;
+//         height: 20px;
+//         background-color: #fff;
+//         border-radius: 50%;
+//         z-index: 100;
+//     }
+//     &-handle {
+//         &-s {
+//             left: -10px;
+//             top: -10px;
+//             cursor: nwse-resize;
+//         }
+//     }
+// }
