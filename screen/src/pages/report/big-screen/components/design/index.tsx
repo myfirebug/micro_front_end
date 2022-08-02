@@ -162,7 +162,8 @@ const Disign: FC<IDisignProps> = ({
                   height: screen.height,
                   backgroundColor: screen.backgroundColor,
                   transform: `scale(${cale})`,
-                  transformOrigin: '0 0'
+                  transformOrigin: '0 0',
+                  background: `url(${screen.backgroundImage}) no-repeat  0% 0% / 100% 100%`
                 }}>
                 <DesignBodyCenter
                   currentPage={currentPage}

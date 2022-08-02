@@ -69,7 +69,10 @@ export const componentsClassify: any[] = [{
 
 // 所有组件地址
 const components: any = {
-  'widget-text': require('./text').default
+  // 文本框
+  'widget-text': require('./text').default,
+  // 组
+  'widget-group': require('./group').default
 }
 
 export default components

@@ -248,7 +248,7 @@ const DesignBodyRight: FC<IDesignBodyRightProps> = ({
   }
 
   useEffect(() => {
-    if (currentWidgetId) {
+    if (currentWidgetId && !currentWidgetId.includes(',')) {
       setKey('2')
     } else {
       setKey('1')
@@ -298,12 +298,12 @@ const DesignBodyRight: FC<IDesignBodyRightProps> = ({
           // onValuesChange={(changedValues, allValues) => modifyScreen(allValues)}
           >
             {
-              renderDynamicForm(pageConfigure.configure, pageForm, modifyScreen)
+              renderDynamicForm(pageConfigure.configure || [], pageForm, modifyScreen)
             }
           </Form>
         </TabPane>
         {
-          currentWidgetId && <>
+          currentWidgetId && !currentWidgetId.includes(',') && <>
             <TabPane tab="配置" key="2">
               <Form
                 form={configureForm}
@@ -320,7 +320,7 @@ const DesignBodyRight: FC<IDesignBodyRightProps> = ({
               >
                 {
                   renderDynamicForm(
-                    currentWidget.configure,
+                    currentWidget.configure || [],
                     configureForm,
                     modifyLargeScreenElement,
                     'configureValue'
@@ -345,7 +345,7 @@ const DesignBodyRight: FC<IDesignBodyRightProps> = ({
               >
                 {
                   renderDynamicForm(
-                    coordinateConfigure.configure,
+                    coordinateConfigure.configure || [],
                     dynamicForm,
                     modifyLargeScreenElement,
                     'coordinateValue'

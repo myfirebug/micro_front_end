@@ -26,8 +26,6 @@ const DesignBodyCenter: FC<IDesignBodyCenterProps> = ({
   screen
 }) => {
 
-  console.log(screen, 'screen')
-
   // 移动时
   const dragStopHandle = (e: any, d: any) => {
     modifyLargeScreenElement(currentWidgetId, {
@@ -52,6 +50,155 @@ const DesignBodyCenter: FC<IDesignBodyCenterProps> = ({
       }
     })
   }
+
+  // 渲染组件
+  const renderWidgets = (widgets: IWidget[]) => {
+    return (
+      <>
+        {
+          widgets.map((item: any, index: number) => {
+            if (item.widgets) {
+              const Widget = components[item.code]
+              if (Widget) {
+                return (
+                  <Widget>
+                    {
+                      renderWidgets(item.widgets)
+                    }
+                  </Widget>
+                )
+              }
+            } else {
+              const Widget = components[item.code]
+              if (Widget) {
+                return (
+                  <Rnd
+                    className={item.id !== currentWidgetId ? 'react-draggable-disabled' : ''}
+                    default={{
+                      x: item.coordinateValue.left,
+                      y: item.coordinateValue.top,
+                      width: item.coordinateValue.width,
+                      height: item.coordinateValue.height
+                    }}
+                    position={{
+                      x: item.coordinateValue.left,
+                      y: item.coordinateValue.top
+                    }}
+                    resizeHandleWrapperClass="handle"
+                    resizeHandleWrapperStyle={{
+                      position: 'absolute',
+                      left: 0,
+                      top: 0,
+                      right: 0,
+                      bottom: 0,
+                      border: 'dashed 2px #fff'
+                    }}
+                    resizeHandleStyles={{
+                      bottom: {
+                        width: 20,
+                        height: 20,
+                        background: '#fff',
+                        borderRadius: 10,
+                        left: '50%',
+                        bottom: -10,
+                        marginLeft: -10
+                      },
+                      bottomLeft: {
+                        background: '#fff',
+                        borderRadius: 10
+                      },
+                      bottomRight: {
+                        background: '#fff',
+                        borderRadius: 10
+                      },
+                      left: {
+                        width: 20,
+                        height: 20,
+                        background: '#fff',
+                        borderRadius: 10,
+                        top: '50%',
+                        left: -10,
+                        marginTop: -10
+                      },
+                      right: {
+                        width: 20,
+                        height: 20,
+                        background: '#fff',
+                        borderRadius: 10,
+                        top: '50%',
+                        right: -10,
+                        marginTop: -10
+                      },
+                      top: {
+                        width: 20,
+                        height: 20,
+                        background: '#fff',
+                        borderRadius: 10,
+                        left: '50%',
+                        top: -10,
+                        marginLeft: -10
+                      },
+                      topLeft: {
+                        background: '#fff',
+                        borderRadius: 10
+                      },
+                      topRight: {
+                        background: '#fff',
+                        borderRadius: 10
+                      }
+                    }}
+                    key={index}
+                    scale={cale}
+                    disableDragging={item.id !== currentWidgetId}
+                    onDragStop={dragStopHandle}
+                    onResizeStop={resizeHandle}
+                    bounds="parent"
+                  >
+                    <div
+                      onClick={(e) => {
+                        if (item.id !== currentWidgetId) {
+                          if (e.ctrlKey) {
+                            //
+                            changeLargeScreenElement(currentWidgetId ? `${currentWidgetId},${item.id}` : item.id)
+                          } else {
+                            changeLargeScreenElement(item.id)
+                          }
+                        }
+                      }}
+                      className={`app-widget__item ${currentWidgetId.includes(item.id) ? 'is-active' : ''}`}>
+                      <div className="mask">
+                        {/* 辅助线 */}
+                        <div className='line-top'></div>
+                        <div className='line-left'></div>
+                        {/* 坐标值 */}
+                        <div className="label">{item.coordinateValue.left},{item.coordinateValue.top}</div>
+                      </div>
+                      <Widget
+                        className={`${item.configureValue.animateName}`}
+                        text={item.configureValue.elementValue}
+                        style={{
+                          ...item.configureValue,
+                          width: '100%',
+                          height: '100%',
+                          animationName: item.configureValue.animateName,
+                          animationTimingFunction: item.configureValue.animateTiming,
+                          animationDelay: item.configureValue.animateDelay + 's',
+                          animationDuration: item.configureValue.animateTime + 's',
+                          animationIterationCount: item.configureValue.animateInfinite ? 'infinite' : 1,
+                          textShadow: `${item.configureValue.textShadowX}px ${item.configureValue.textShadowY}px ${item.configureValue.textShadowF}px ${item.configureValue.textShadowC}`,
+                          fontSize: Number(item.configureValue.fontSize)
+                        }} />
+                    </div>
+                  </Rnd>
+                )
+              }
+            }
+          })
+        }
+      </>
+    )
+  }
+
   return (
     <>
       {
@@ -85,126 +232,7 @@ const DesignBodyCenter: FC<IDesignBodyCenterProps> = ({
       }
       {
         currentPage && currentPage.widgets ?
-          currentPage.widgets.map((item: any, index: number) => {
-            const Widget = components[item.code]
-            if (Widget) {
-              return (
-                <Rnd
-                  className={item.id !== currentWidgetId ? 'react-draggable-disabled' : ''}
-                  default={{
-                    x: item.coordinateValue.left,
-                    y: item.coordinateValue.top,
-                    width: item.coordinateValue.width,
-                    height: item.coordinateValue.height
-                  }}
-                  position={{
-                    x: item.coordinateValue.left,
-                    y: item.coordinateValue.top
-                  }}
-                  resizeHandleWrapperClass="handle"
-                  resizeHandleWrapperStyle={{
-                    position: 'absolute',
-                    left: 0,
-                    top: 0,
-                    right: 0,
-                    bottom: 0,
-                    border: 'dashed 2px #fff'
-                  }}
-                  resizeHandleStyles={{
-                    bottom: {
-                      width: 20,
-                      height: 20,
-                      background: '#fff',
-                      borderRadius: 10,
-                      left: '50%',
-                      bottom: -10,
-                      marginLeft: -10
-                    },
-                    bottomLeft: {
-                      background: '#fff',
-                      borderRadius: 10
-                    },
-                    bottomRight: {
-                      background: '#fff',
-                      borderRadius: 10
-                    },
-                    left: {
-                      width: 20,
-                      height: 20,
-                      background: '#fff',
-                      borderRadius: 10,
-                      top: '50%',
-                      left: -10,
-                      marginTop: -10
-                    },
-                    right: {
-                      width: 20,
-                      height: 20,
-                      background: '#fff',
-                      borderRadius: 10,
-                      top: '50%',
-                      right: -10,
-                      marginTop: -10
-                    },
-                    top: {
-                      width: 20,
-                      height: 20,
-                      background: '#fff',
-                      borderRadius: 10,
-                      left: '50%',
-                      top: -10,
-                      marginLeft: -10
-                    },
-                    topLeft: {
-                      background: '#fff',
-                      borderRadius: 10
-                    },
-                    topRight: {
-                      background: '#fff',
-                      borderRadius: 10
-                    }
-                  }}
-                  key={index}
-                  scale={cale}
-                  disableDragging={item.id !== currentWidgetId}
-                  onDragStop={dragStopHandle}
-                  onResizeStop={resizeHandle}
-                  bounds="parent"
-                >
-                  <div
-                    onClick={(e) => {
-                      if (item.id !== currentWidgetId) {
-                        changeLargeScreenElement(item.id)
-                      }
-                    }}
-                    className={`app-widget__item ${item.id === currentWidgetId ? 'is-active' : ''}`}>
-                    <div className="mask">
-                      {/* 辅助线 */}
-                      <div className='line-top'></div>
-                      <div className='line-left'></div>
-                      {/* 坐标值 */}
-                      <div className="label">{item.coordinateValue.left},{item.coordinateValue.top}</div>
-                    </div>
-                    <Widget
-                      className={`${item.configureValue.animateName}`}
-                      text={item.configureValue.elementValue}
-                      style={{
-                        ...item.configureValue,
-                        width: '100%',
-                        height: '100%',
-                        'animation-name': item.configureValue.animateName,
-                        'animation-timing-function': item.configureValue.animateTiming,
-                        'animation-delay': item.configureValue.animateDelay + 's',
-                        'animation-duration': item.configureValue.animateTime + 's',
-                        'animation-iteration-count': !item.configureValue.animateInfinite ? 1 : 'infinite',
-                        textShadow: `${item.configureValue.textShadowX}px ${item.configureValue.textShadowY}px ${item.configureValue.textShadowF}px ${item.configureValue.textShadowC}`,
-                        fontSize: Number(item.configureValue.fontSize)
-                      }} />
-                  </div>
-                </Rnd>
-              )
-            }
-          }) : null
+          renderWidgets(currentPage.widgets) : null
       }
     </>
   )

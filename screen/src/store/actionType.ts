@@ -95,6 +95,10 @@ export interface IWidget extends IAnyObject {
 	configure: any[];
 	// 坐标值
 	coordinateValue: any;
+	// 是否是是组
+	isGroup: boolean;
+	// 组件
+	widgets: IWidget[];
 }
 
 // 页面接口
@@ -110,6 +114,10 @@ export interface IScreen {
 	title: string;
 	description: string;
 	backgroundColor: string;
+	backgroundImage: string;
+	gridSize: number;
+	gridBorderColor: string;
+	gridFlag: boolean;
 }
 /**
  * 所有页面
@@ -130,7 +138,10 @@ export type LARGESCREEN_STATE = {
 	currentWidgetId: string;
 	// 选中的组件
 	currentWidget: IWidget;
+	// 屏幕配置
 	screen: IScreen;
+	// 是否包含group的widget
+	hasGroup: boolean;
 };
 // 获取大屏数据
 export const LARGE_SCREEN = 'LARGE_SCREEN';

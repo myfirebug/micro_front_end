@@ -97,8 +97,8 @@ const DesignHeader: FC<IDesignHeaderProps> = ({
 
   useEffect(() => {
     const keyupHander = (e: any) => {
+      console.log(e, '12')
       if (e.ctrlKey) {
-        console.log(e.keyCode)
         switch (e.keyCode) {
           case 90:
             if (e.altKey) {
@@ -125,7 +125,15 @@ const DesignHeader: FC<IDesignHeaderProps> = ({
           case 40:
             moveHander('bottom')
             break
-
+          default:
+        }
+      }
+      if (e.altKey) {
+        switch (e.keyCode) {
+          // 分组
+          case 71:
+            alert(12)
+            break
           default:
         }
       }
@@ -135,7 +143,7 @@ const DesignHeader: FC<IDesignHeaderProps> = ({
     return () => {
       document.removeEventListener('keyup', keyupHander)
     }
-  }, [undoHander, redoHandler, moveHander])
+  }, [undoHander, redoHandler, moveHander, currentWidgetId])
 
   return (
     <div className='app-screen-disign__header'>

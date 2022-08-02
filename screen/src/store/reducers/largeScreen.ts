@@ -34,8 +34,10 @@ const initialState = {
 		description: '描述',
 		gridSize: 10,
 		gridBorderColor: '#ddd',
-		gridFlag: false
-	}
+		gridFlag: false,
+		backgroundImage: ''
+	},
+	hasGroup: false
 };
 
 export const largeScreen = (
@@ -158,9 +160,9 @@ export const largeScreen = (
 		// 切换元素
 		case CHANGE_LARGESCREEN_ELEMENET: {
 			const currentPage: IPage = { ...copy.currentPage };
-			const index = currentPage.widgets.findIndex(
-				(item) => item.id === action.id
-			);
+			// 获取所有组件
+			const widgets = currentPage.widgets;
+			const index = widgets.findIndex((item) => item.id === action.id);
 			if (index !== -1) {
 				return {
 					...copy,
@@ -168,7 +170,11 @@ export const largeScreen = (
 					currentWidget: currentPage.widgets[index]
 				};
 			}
-			return copy;
+			return {
+				...copy,
+				currentWidgetId: action.id,
+				currentWidget: {} as IWidget
+			};
 		}
 		// 撤销
 		case UNDO_LARGESCREEN: {

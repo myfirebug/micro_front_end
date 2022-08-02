@@ -5,6 +5,7 @@ const text = {
     code: 'widget-text',
     type: 'text',
     label: '文本',
+    isGroup: false,
     // 配置项值
     configureValue: {
         elementValue: '文本框',

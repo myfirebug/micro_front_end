@@ -29,6 +29,13 @@ const page = {
 		},
 		{
 			type: 'Input',
+			label: '背景图片',
+			name: 'backgroundImage',
+			required: false,
+			placeholder: '请输入背景图片地址'
+		},
+		{
+			type: 'Input',
 			label: '标题',
 			name: 'title',
 			require: false,
