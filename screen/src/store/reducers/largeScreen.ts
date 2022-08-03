@@ -37,7 +37,7 @@ const initialState = {
 		gridFlag: false,
 		backgroundImage: ''
 	},
-	hasGroup: false
+	currentWidgetGroupId: ''
 };
 
 export const largeScreen = (
@@ -58,15 +58,6 @@ export const largeScreen = (
 			};
 		// 新增页面
 		case ADD_LARGESCREEN_PAGE:
-			if (copy.currentPage) {
-				// 这里首页判断当前currentPage在pages里的下标，然后替换数据
-				const currentPageIndex = copy.pages.findIndex(
-					(item) => item.id === copy.currentPage.id
-				);
-				if (currentPageIndex !== -1) {
-					copy.pages[currentPageIndex] = { ...copy.currentPage };
-				}
-			}
 			return {
 				...copy,
 				pages: [...copy.pages, action.data],
@@ -98,27 +89,15 @@ export const largeScreen = (
 		case CHANGE_LARGESCREEN_PAGE: {
 			// 这里首页判断当前currentPage在pages里的下标，然后替换数据
 			const currentPageIndex = copy.pages.findIndex(
-				(item) => item.id === copy.currentPage.id
+				(item) => item.id === action.id
 			);
 			if (currentPageIndex !== -1) {
-				copy.pages[currentPageIndex] = { ...copy.currentPage };
+				copy.currentPage = {
+					...copy.pages[currentPageIndex]
+				};
 			}
-
-			// 这里找到需要修改的id的下标
-			const index = copy.pages.findIndex((item) => item.id === action.id);
 			return {
 				...copy,
-				pages: copy.pages.map((item) => {
-					if (item.id === copy.currentPage.id) {
-						return {
-							...copy.currentPage
-						};
-					}
-					return item;
-				}),
-				currentPage: {
-					...copy.pages[index]
-				},
 				pastPage: [],
 				futurePage: [],
 				currentWidgetId: ''
@@ -126,7 +105,7 @@ export const largeScreen = (
 		}
 		// 添加元素
 		case ADD_LARGESCREEN_ELEMENT: {
-			const currentPage: IPage = { ...copy.currentPage };
+			const currentPage: IPage = copy.currentPage;
 			currentPage.widgets = currentPage.widgets
 				? [...currentPage.widgets, action.data]
 				: [];
@@ -139,41 +118,106 @@ export const largeScreen = (
 			};
 		}
 		// 删除元素
-		case DEL_LARGESCREEN_ELEMENT:
-			return copy;
-		// 修改元素
+		case DEL_LARGESCREEN_ELEMENT: {
+			const currentPage: IPage = copy.currentPage;
+			const groupIndex = currentPage.widgets.findIndex(
+				(item) => item.id === copy.currentWidgetGroupId
+			);
+			// 如果存在分组
+			if (groupIndex !== -1) {
+				currentPage.widgets[groupIndex].widgets = currentPage.widgets[
+					groupIndex
+				].widgets.filter((item) => item.id !== action.id);
+			} else {
+				currentPage.widgets = currentPage.widgets.filter(
+					(item) => item.id !== action.id
+				);
+			}
+
+			copy.currentWidgetId = '';
+			copy.currentWidgetGroupId = '';
+			copy.currentWidget = {} as IWidget;
+
+			return {
+				...copy,
+				pastPage: [...copy.pastPage, currentPage]
+			};
+		}
+		// 修改元素，注意里只有子级组件才传groupId哈
 		case MODIFY_LARGESCREEN_ELEMENT: {
 			const currentPage: IPage = copy.currentPage;
-			currentPage.widgets = currentPage.widgets.map((item) => {
-				if (item.id === action.id) {
-					return action.data;
-				}
-				return item;
-			});
+			// 找组下标
+			const groupIndex = currentPage.widgets.findIndex(
+				(item) => item.id === action.groupId
+			);
+			// 如果有分组，则找分组下面的widget
+			if (groupIndex !== -1) {
+				currentPage.widgets[groupIndex].widgets = currentPage.widgets[
+					groupIndex
+				].widgets.map((item) => {
+					if (item.id === action.id) {
+						return {
+							...action.data
+						};
+					}
+					return item;
+				});
+			} else {
+				// 如果没有分组，则找分当前页下面的widget
+				currentPage.widgets = currentPage.widgets.map((item) => {
+					if (item.id === action.id) {
+						return {
+							...action.data
+						};
+					}
+					return item;
+				});
+			}
+
 			return {
 				...copy,
 				pastPage: [...copy.pastPage, currentPage],
 				currentPage: currentPage,
-				currentWidget: action.data
+				currentWidget: action.data,
+				currentWidgetId: action.id,
+				currentWidgetGroupId: action.groupId || ''
 			};
 		}
 		// 切换元素
 		case CHANGE_LARGESCREEN_ELEMENET: {
-			const currentPage: IPage = { ...copy.currentPage };
-			// 获取所有组件
-			const widgets = currentPage.widgets;
-			const index = widgets.findIndex((item) => item.id === action.id);
-			if (index !== -1) {
-				return {
-					...copy,
-					currentWidgetId: action.id,
-					currentWidget: currentPage.widgets[index]
-				};
+			// 当前页信息
+			const currentPage: IPage = copy.currentPage;
+			// 传入组ID
+			const groupIndex = currentPage.widgets.findIndex(
+				(item) => item.id === action.groupId
+			);
+			// 如果有分组，则找分组下面的widget
+			if (groupIndex !== -1) {
+				const index = currentPage.widgets[groupIndex].widgets.findIndex(
+					(item) => item.id === action.id
+				);
+				if (index !== -1) {
+					copy.currentWidget = {
+						...currentPage.widgets[groupIndex].widgets[index]
+					};
+				}
+			} else {
+				// 如果没有分组，则找分当前页下面的widget
+				const index = currentPage.widgets.findIndex(
+					(item) => item.id === action.id
+				);
+				if (index !== -1) {
+					copy.currentWidget = {
+						...currentPage.widgets[index]
+					};
+				}
 			}
+
 			return {
 				...copy,
+				pastPage: [...copy.pastPage, currentPage],
 				currentWidgetId: action.id,
-				currentWidget: {} as IWidget
+				currentWidgetGroupId: action.groupId || ''
 			};
 		}
 		// 撤销

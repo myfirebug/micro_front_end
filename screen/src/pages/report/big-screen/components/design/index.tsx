@@ -47,8 +47,9 @@ interface IDisignProps {
   modifyLargeScreenPage: (id: string, data: IPage, callback?: Function) => void;
   changeLargeScreenPage: (id: string, callback?: Function) => void;
   addLargeScreenElement: (data: any) => void;
-  modifyLargeScreenElement: (id: string, data: IWidget, callback?: Function) => void;
-  changeLargeScreenElement: (id: string, callback?: Function) => void;
+  modifyLargeScreenElement: (id: string, data: IWidget, groupId?: string) => void;
+  changeLargeScreenElement: (id: string, groupId?: string) => void;
+  delLargeScreenElement: (id: string) => void;
   currentPage: IPage;
   currentWidgetId: string;
   currentWidget: IWidget;
@@ -56,6 +57,7 @@ interface IDisignProps {
   futurePage: IPage[];
   undoLargeScreen: () => void;
   redoLargeScreen: () => void;
+  currentWidgetGroupId: string;
 }
 
 const Disign: FC<IDisignProps> = ({
@@ -77,8 +79,11 @@ const Disign: FC<IDisignProps> = ({
   futurePage,
   undoLargeScreen,
   redoLargeScreen,
-  changeLargeScreenElement
+  changeLargeScreenElement,
+  currentWidgetGroupId,
+  delLargeScreenElement
 }) => {
+
   // 获取装组件的盒子，这里需要获取他的宽度
   const elementsWrapper = useRef<HTMLDivElement>(null)
   const [elementsWrapperAttr, setElementsWrapperAttr] = useState<any>({})
@@ -126,6 +131,8 @@ const Disign: FC<IDisignProps> = ({
         currentWidgetId={currentWidgetId}
         modifyLargeScreenElement={modifyLargeScreenElement}
         setDrawer={setDrawer}
+        delLargeScreenElement={delLargeScreenElement}
+        currentWidgetGroupId={currentWidgetGroupId}
         currentWidget={currentWidget} />
       {/* 内容区 */}
       <div className='app-screen-disign__body'>
@@ -160,10 +167,9 @@ const Disign: FC<IDisignProps> = ({
                   top: 66,
                   width: screen.width,
                   height: screen.height,
-                  backgroundColor: screen.backgroundColor,
                   transform: `scale(${cale})`,
                   transformOrigin: '0 0',
-                  background: `url(${screen.backgroundImage}) no-repeat  0% 0% / 100% 100%`
+                  background: `url(${screen.backgroundImage}) no-repeat ${screen.backgroundColor}  0% 0% / 100% 100%`
                 }}>
                 <DesignBodyCenter
                   currentPage={currentPage}
@@ -208,15 +214,18 @@ const Disign: FC<IDisignProps> = ({
 }
 
 // 对应的statemkjh m,
-const mapStateToProps = (state: ALL_STATE) => ({
-  pages: state.largeScreen.pages,
-  pastPage: state.largeScreen.pastPage,
-  futurePage: state.largeScreen.futurePage,
-  currentPage: state.largeScreen.currentPage,
-  currentWidgetId: state.largeScreen.currentWidgetId,
-  screen: state.largeScreen.screen,
-  currentWidget: state.largeScreen.currentWidget
-});
+const mapStateToProps = (state: ALL_STATE) => {
+  return {
+    pages: state.largeScreen.pages,
+    pastPage: state.largeScreen.pastPage,
+    futurePage: state.largeScreen.futurePage,
+    currentPage: state.largeScreen.currentPage,
+    currentWidgetId: state.largeScreen.currentWidgetId,
+    screen: state.largeScreen.screen,
+    currentWidget: state.largeScreen.currentWidget,
+    currentWidgetGroupId: state.largeScreen.currentWidgetGroupId
+  }
+};
 
 // 将 对应action 插入到组件的 props 中
 const mapDispatchToProps = {

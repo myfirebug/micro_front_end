@@ -11,8 +11,8 @@ interface IDesignBodyCenterProps {
   currentWidgetId: string;
   currentWidget: IWidget;
   cale: number;
-  modifyLargeScreenElement: (id: string, data: IWidget, callback?: Function) => void;
-  changeLargeScreenElement: (id: string, callback?: Function) => void;
+  modifyLargeScreenElement: (id: string, data: IWidget, groupId?: string) => void;
+  changeLargeScreenElement: (id: string, groupId?: string) => void;
   screen: any;
 }
 
@@ -52,7 +52,7 @@ const DesignBodyCenter: FC<IDesignBodyCenterProps> = ({
   }
 
   // 渲染组件
-  const renderWidgets = (widgets: IWidget[]) => {
+  const renderWidgets = (widgets: IWidget[], groupId?: string) => {
     return (
       <>
         {
@@ -63,7 +63,7 @@ const DesignBodyCenter: FC<IDesignBodyCenterProps> = ({
                 return (
                   <Widget>
                     {
-                      renderWidgets(item.widgets)
+                      renderWidgets(item.widgets, item.id)
                     }
                   </Widget>
                 )
@@ -157,11 +157,11 @@ const DesignBodyCenter: FC<IDesignBodyCenterProps> = ({
                     <div
                       onClick={(e) => {
                         if (item.id !== currentWidgetId) {
-                          if (e.ctrlKey) {
+                          if (e.ctrlKey && !groupId) {
                             //
                             changeLargeScreenElement(currentWidgetId ? `${currentWidgetId},${item.id}` : item.id)
                           } else {
-                            changeLargeScreenElement(item.id)
+                            changeLargeScreenElement(item.id, groupId)
                           }
                         }
                       }}

@@ -69,12 +69,14 @@ export interface IChangeLargeScreenPageAction {
 export interface IAddLargeScreenElementAction {
 	type: ADD_LARGESCREEN_ELEMENT_TYPE;
 	data: IWidget;
+	groupId?: string;
 }
 
 // 删除元素
 export interface IDelLargeScreenElementAction {
 	type: DEL_LARGESCREEN_ELEMENT_TYPE;
 	id: string;
+	groupId?: string;
 }
 
 // 修改元素
@@ -82,12 +84,14 @@ export interface IModifyLargeScreenElementAction {
 	type: MODIFY_LARGESCREEN_ELEMENT_TYPE;
 	id: string;
 	data: IWidget;
+	groupId?: string;
 }
 
 // 切换元素
 export interface IChangeLargeScreenElementAction {
 	type: CHANGE_LARGESCREEN_ELEMENET_TYPE;
 	id: string;
+	groupId?: string;
 }
 
 // 撤销
@@ -153,36 +157,44 @@ const actionChangeLargeScreenPage = (
 
 // 新增元素数据的方法
 const actionAddLargeScreenElement = (
-	data: IWidget
+	data: IWidget,
+	groupId?: string
 ): IAddLargeScreenElementAction => ({
 	type: ADD_LARGESCREEN_ELEMENT,
-	data
+	data,
+	groupId
 });
 
 // 删除元素数据的方法
 const actionDelLargeScreenElement = (
-	id: string
+	id: string,
+	groupId?: string
 ): IDelLargeScreenElementAction => ({
 	type: DEL_LARGESCREEN_ELEMENT,
-	id
+	id,
+	groupId
 });
 
 // 修改元素数据的方法
 const actionModifyLargeScreenElement = (
 	id: string,
-	data: IWidget
+	data: IWidget,
+	groupId?: string
 ): IModifyLargeScreenElementAction => ({
 	type: MODIFY_LARGESCREEN_ELEMENT,
 	id,
-	data
+	data,
+	groupId
 });
 
 // 切换元素数据的方法
 const actionChangeLargeScreenElement = (
-	id: string
+	id: string,
+	groupId?: string
 ): IChangeLargeScreenElementAction => ({
 	type: CHANGE_LARGESCREEN_ELEMENET,
-	id
+	id,
+	groupId
 });
 
 // 撤销元素数据的方法
@@ -236,27 +248,26 @@ export const changeLargeScreenPage =
 
 // 新增元素数据
 export const addLargeScreenElement =
-	(data: IWidget) => (dispatch: Dispatch) => {
-		dispatch(actionAddLargeScreenElement(data));
+	(data: IWidget, groupId?: string) => (dispatch: Dispatch) => {
+		dispatch(actionAddLargeScreenElement(data, groupId));
 	};
 
 // 删除元素数据
-export const delLargeScreenElement = (id: string) => (dispatch: Dispatch) => {
-	dispatch(actionDelLargeScreenElement(id));
-};
+export const delLargeScreenElement =
+	(id: string, groupId?: string) => (dispatch: Dispatch) => {
+		dispatch(actionDelLargeScreenElement(id, groupId));
+	};
 
 // 修改元素数据
 export const modifyLargeScreenElement =
-	(id: string, data: IWidget, callback?: Function) => (dispatch: Dispatch) => {
-		dispatch(actionModifyLargeScreenElement(id, data));
-		callback && callback();
+	(id: string, data: IWidget, groupId?: string) => (dispatch: Dispatch) => {
+		dispatch(actionModifyLargeScreenElement(id, data, groupId));
 	};
 
 // 切换元素数据
 export const changeLargeScreenElement =
-	(id: string, callback?: Function) => (dispatch: Dispatch) => {
-		dispatch(actionChangeLargeScreenElement(id));
-		callback && callback();
+	(id: string, groupId?: string) => (dispatch: Dispatch) => {
+		dispatch(actionChangeLargeScreenElement(id, groupId));
 	};
 
 // 撤销元素数据

@@ -11,7 +11,11 @@ import {
   ArrowUpOutlined,
   ArrowDownOutlined,
   ArrowRightOutlined,
-  ArrowLeftOutlined
+  ArrowLeftOutlined,
+  FolderOutlined,
+  FolderAddOutlined,
+  DeleteOutlined,
+  CopyOutlined
 } from '@ant-design/icons'
 // 配置文件
 import { widgetConfigure } from '@src/widget/tools'
@@ -32,7 +36,9 @@ interface IDesignHeaderProps {
   currentPageId: string;
   undoLargeScreen: () => void;
   redoLargeScreen: () => void;
-  modifyLargeScreenElement: (id: string, data: IWidget, callback?: Function) => void;
+  modifyLargeScreenElement: (id: string, data: IWidget, groupId?: string) => void;
+  delLargeScreenElement: (id: string) => void;
+  currentWidgetGroupId: string;
 }
 
 const DesignHeader: FC<IDesignHeaderProps> = ({
@@ -45,7 +51,9 @@ const DesignHeader: FC<IDesignHeaderProps> = ({
   currentWidget,
   undoLargeScreen,
   redoLargeScreen,
-  modifyLargeScreenElement
+  modifyLargeScreenElement,
+  currentWidgetGroupId,
+  delLargeScreenElement
 }) => {
   // 向页面添加组件
   const addElement = (code: string) => {
@@ -73,6 +81,13 @@ const DesignHeader: FC<IDesignHeaderProps> = ({
       redoLargeScreen()
     }
   }, [futurePage.length, redoLargeScreen])
+
+  // 删除
+  const delHander = useCallback(() => {
+    if (currentWidgetId && !currentWidgetId.includes(',')) {
+      delLargeScreenElement(currentWidgetId)
+    }
+  }, [currentWidgetId])
 
   // 移动上移下移左移右移
   const moveHander = useCallback((field: 'top' | 'left' | 'bottom' | 'right') => {
@@ -128,15 +143,6 @@ const DesignHeader: FC<IDesignHeaderProps> = ({
           default:
         }
       }
-      if (e.altKey) {
-        switch (e.keyCode) {
-          // 分组
-          case 71:
-            alert(12)
-            break
-          default:
-        }
-      }
     }
     document.addEventListener('keyup', keyupHander)
 
@@ -169,68 +175,107 @@ const DesignHeader: FC<IDesignHeaderProps> = ({
         }
       </ul>
       {/* elements end */}
-      <ul className='app-screen-disign__header--center'>
-        <li className={`${!currentPageId ? 'is-disabled' : ''}`}>
-          <Tooltip title="保存(ctrl+s)" placement="bottom">
-            <SaveOutlined />
-            <p>保存</p>
-          </Tooltip>
-        </li>
-        <li className={`${!currentPageId ? 'is-disabled' : ''}`}>
-          <Tooltip title="预览(ctrl+p)" placement="bottom">
-            <EyeOutlined />
-            <p>预览</p>
-          </Tooltip>
-        </li>
-        <li
-          onClick={undoHander}
-          className={`${!pastPage.length ? 'is-disabled' : ''}`}>
-          <Tooltip title="撤销(ctrl+z)" placement="bottom">
-            <RotateLeftOutlined />
-            <p>撤销</p>
-          </Tooltip>
-        </li>
-        <li
-          onClick={redoHandler}
-          className={`${!futurePage.length ? 'is-disabled' : ''}`}>
-          <Tooltip title="恢复(ctrl+alt+z)" placement="bottom">
-            <RotateRightOutlined />
-            <p>恢复</p>
-          </Tooltip>
-        </li>
-        <li
-          onClick={() => moveHander('top')}
-          className={`${!currentWidgetId ? 'is-disabled' : ''}`}>
-          <Tooltip title="上移(ctrl+↑)" placement="bottom">
-            <ArrowUpOutlined />
-            <p>上移</p>
-          </Tooltip>
-        </li>
-        <li
-          onClick={() => moveHander('bottom')}
-          className={`${!currentWidgetId ? 'is-disabled' : ''}`}>
-          <Tooltip title="下移(ctrl+↓)" placement="bottom">
-            <ArrowDownOutlined />
-            <p>下移</p>
-          </Tooltip>
-        </li>
-        <li
-          onClick={() => moveHander('left')}
-          className={`${!currentWidgetId ? 'is-disabled' : ''}`}>
-          <Tooltip title="左移(ctrl+←)" placement="bottom">
-            <ArrowLeftOutlined />
-            <p>左移</p>
-          </Tooltip>
-        </li>
-        <li
-          onClick={() => moveHander('right')}
-          className={`${!currentWidgetId ? 'is-disabled' : ''}`}>
-          <Tooltip title="右移(ctrl+→)" placement="bottom">
-            <ArrowRightOutlined />
-            <p>右移</p>
-          </Tooltip>
-        </li>
-      </ul>
+      <div className='app-screen-disign__header--center'>
+        <ul className='shortcuts-group'>
+          <li
+            className={`${currentWidgetGroupId || !currentWidgetId.includes(',') ? 'is-disabled' : ''}`}>
+            <Tooltip title="分组" placement="bottom">
+              <FolderAddOutlined />
+              <p>分组</p>
+            </Tooltip>
+          </li>
+          <li
+            className={`${!currentWidgetGroupId || currentWidgetId.includes(',') ? 'is-disabled' : ''}`}>
+            <Tooltip title="拆分" placement="bottom">
+              <FolderOutlined />
+              <p>拆分</p>
+            </Tooltip>
+          </li>
+        </ul>
+        <ul className='shortcuts-group'>
+          <li
+            className={`${currentWidgetId && !currentWidgetId.includes(',') ? '' : 'is-disabled'}`}>
+            <Tooltip title="复制(ctrl+c)" placement="bottom">
+              <CopyOutlined />
+              <p>复制</p>
+            </Tooltip>
+          </li>
+          <li
+            onClick={delHander}
+            className={`${currentWidgetId && !currentWidgetId.includes(',') ? '' : 'is-disabled'}`}>
+            <Tooltip title="删除(del)" placement="bottom">
+              <DeleteOutlined />
+              <p>删除</p>
+            </Tooltip>
+          </li>
+        </ul>
+        <ul className='shortcuts-group'>
+          <li
+            onClick={undoHander}
+            className={`${!pastPage.length ? 'is-disabled' : ''}`}>
+            <Tooltip title="撤销(ctrl+z)" placement="bottom">
+              <RotateLeftOutlined />
+              <p>撤销</p>
+            </Tooltip>
+          </li>
+          <li
+            onClick={redoHandler}
+            className={`${!futurePage.length ? 'is-disabled' : ''}`}>
+            <Tooltip title="恢复(ctrl+alt+z)" placement="bottom">
+              <RotateRightOutlined />
+              <p>恢复</p>
+            </Tooltip>
+          </li>
+        </ul>
+        <ul className='shortcuts-group'>
+          <li
+            onClick={() => moveHander('top')}
+            className={`${!currentWidgetId || currentWidgetId.includes(',') ? 'is-disabled' : ''}`}>
+            <Tooltip title="上移(ctrl+↑)" placement="bottom">
+              <ArrowUpOutlined />
+              <p>上移</p>
+            </Tooltip>
+          </li>
+          <li
+            onClick={() => moveHander('bottom')}
+            className={`${!currentWidgetId || currentWidgetId.includes(',') ? 'is-disabled' : ''}`}>
+            <Tooltip title="下移(ctrl+↓)" placement="bottom">
+              <ArrowDownOutlined />
+              <p>下移</p>
+            </Tooltip>
+          </li>
+          <li
+            onClick={() => moveHander('left')}
+            className={`${!currentWidgetId || currentWidgetId.includes(',') ? 'is-disabled' : ''}`}>
+            <Tooltip title="左移(ctrl+←)" placement="bottom">
+              <ArrowLeftOutlined />
+              <p>左移</p>
+            </Tooltip>
+          </li>
+          <li
+            onClick={() => moveHander('right')}
+            className={`${!currentWidgetId || currentWidgetId.includes(',') ? 'is-disabled' : ''}`}>
+            <Tooltip title="右移(ctrl+→)" placement="bottom">
+              <ArrowRightOutlined />
+              <p>右移</p>
+            </Tooltip>
+          </li>
+        </ul>
+        <ul className='shortcuts-group'>
+          <li className={`${!currentPageId ? 'is-disabled' : ''}`}>
+            <Tooltip title="保存(ctrl+s)" placement="bottom">
+              <SaveOutlined />
+              <p>保存</p>
+            </Tooltip>
+          </li>
+          <li className={`${!currentPageId ? 'is-disabled' : ''}`}>
+            <Tooltip title="预览(ctrl+p)" placement="bottom">
+              <EyeOutlined />
+              <p>预览</p>
+            </Tooltip>
+          </li>
+        </ul>
+      </div>
       <ul className="app-screen-disign__header--right">
         <li onClick={() => setDrawer((state: any) => ({
           ...state,

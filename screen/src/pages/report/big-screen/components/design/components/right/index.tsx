@@ -19,7 +19,7 @@ interface IDesignBodyRightProps {
   modifyScreen: (datas: any) => void;
   currentWidgetId: string;
   currentWidget: IWidget;
-  modifyLargeScreenElement: (id: string, data: IWidget, callback?: Function) => void;
+  modifyLargeScreenElement: (id: string, data: IWidget, groupId?: string) => void;
   currentPage: IPage;
   setRightFlag: React.Dispatch<React.SetStateAction<boolean>>;
   rightFlag: Boolean;

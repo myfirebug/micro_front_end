@@ -140,8 +140,8 @@ export type LARGESCREEN_STATE = {
 	currentWidget: IWidget;
 	// 屏幕配置
 	screen: IScreen;
-	// 是否包含group的widget
-	hasGroup: boolean;
+	// groupID
+	currentWidgetGroupId: string;
 };
 // 获取大屏数据
 export const LARGE_SCREEN = 'LARGE_SCREEN';
