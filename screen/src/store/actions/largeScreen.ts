@@ -19,6 +19,8 @@ import {
 	MODIFY_LARGESCREEN_ELEMENT_TYPE,
 	CHANGE_LARGESCREEN_ELEMENET,
 	CHANGE_LARGESCREEN_ELEMENET_TYPE,
+	COPY_LARGESCREEN_ELEMENET,
+	COPY_LARGESCREEN_ELEMENET_TYPE,
 	UNDO_LARGESCREEN,
 	UNDO_LARGESCREEN_TYPE,
 	REDO_LARGESCREEN,
@@ -75,8 +77,6 @@ export interface IAddLargeScreenElementAction {
 // 删除元素
 export interface IDelLargeScreenElementAction {
 	type: DEL_LARGESCREEN_ELEMENT_TYPE;
-	id: string;
-	groupId?: string;
 }
 
 // 修改元素
@@ -92,6 +92,11 @@ export interface IChangeLargeScreenElementAction {
 	type: CHANGE_LARGESCREEN_ELEMENET_TYPE;
 	id: string;
 	groupId?: string;
+}
+
+// 复制元素
+export interface ICopyLargeScreenElementAction {
+	type: COPY_LARGESCREEN_ELEMENET_TYPE;
 }
 
 // 撤销
@@ -115,6 +120,7 @@ export type ModifyAction =
 	| IDelLargeScreenElementAction
 	| IModifyLargeScreenElementAction
 	| IChangeLargeScreenElementAction
+	| ICopyLargeScreenElementAction
 	| IUndoLargeScreenAction
 	| IRedoLargeScreenAction
 	| IModifyScreenAction;
@@ -166,13 +172,8 @@ const actionAddLargeScreenElement = (
 });
 
 // 删除元素数据的方法
-const actionDelLargeScreenElement = (
-	id: string,
-	groupId?: string
-): IDelLargeScreenElementAction => ({
-	type: DEL_LARGESCREEN_ELEMENT,
-	id,
-	groupId
+const actionDelLargeScreenElement = (): IDelLargeScreenElementAction => ({
+	type: DEL_LARGESCREEN_ELEMENT
 });
 
 // 修改元素数据的方法
@@ -195,6 +196,11 @@ const actionChangeLargeScreenElement = (
 	type: CHANGE_LARGESCREEN_ELEMENET,
 	id,
 	groupId
+});
+
+// 复制元素数据的方法
+const actionCopyLargeScreenElement = (): ICopyLargeScreenElementAction => ({
+	type: COPY_LARGESCREEN_ELEMENET
 });
 
 // 撤销元素数据的方法
@@ -253,10 +259,9 @@ export const addLargeScreenElement =
 	};
 
 // 删除元素数据
-export const delLargeScreenElement =
-	(id: string, groupId?: string) => (dispatch: Dispatch) => {
-		dispatch(actionDelLargeScreenElement(id, groupId));
-	};
+export const delLargeScreenElement = () => (dispatch: Dispatch) => {
+	dispatch(actionDelLargeScreenElement());
+};
 
 // 修改元素数据
 export const modifyLargeScreenElement =
@@ -269,6 +274,11 @@ export const changeLargeScreenElement =
 	(id: string, groupId?: string) => (dispatch: Dispatch) => {
 		dispatch(actionChangeLargeScreenElement(id, groupId));
 	};
+
+// 复制元素数据
+export const copyLargeScreenElement = () => (dispatch: Dispatch) => {
+	dispatch(actionCopyLargeScreenElement());
+};
 
 // 撤销元素数据
 export const undoLargeScreen = () => (dispatch: Dispatch) => {

@@ -37,7 +37,8 @@ interface IDesignHeaderProps {
   undoLargeScreen: () => void;
   redoLargeScreen: () => void;
   modifyLargeScreenElement: (id: string, data: IWidget, groupId?: string) => void;
-  delLargeScreenElement: (id: string) => void;
+  delLargeScreenElement: () => void;
+  copyLargeScreenElement: () => void;
   currentWidgetGroupId: string;
 }
 
@@ -53,7 +54,8 @@ const DesignHeader: FC<IDesignHeaderProps> = ({
   redoLargeScreen,
   modifyLargeScreenElement,
   currentWidgetGroupId,
-  delLargeScreenElement
+  delLargeScreenElement,
+  copyLargeScreenElement
 }) => {
   // 向页面添加组件
   const addElement = (code: string) => {
@@ -83,9 +85,16 @@ const DesignHeader: FC<IDesignHeaderProps> = ({
   }, [futurePage.length, redoLargeScreen])
 
   // 删除
-  const delHander = useCallback(() => {
+  const delHandler = useCallback(() => {
     if (currentWidgetId && !currentWidgetId.includes(',')) {
-      delLargeScreenElement(currentWidgetId)
+      delLargeScreenElement()
+    }
+  }, [currentWidgetId])
+
+  // 复制
+  const copyHandler = useCallback(() => {
+    if (currentWidgetId && !currentWidgetId.includes(',')) {
+      copyLargeScreenElement()
     }
   }, [currentWidgetId])
 
@@ -140,6 +149,14 @@ const DesignHeader: FC<IDesignHeaderProps> = ({
           case 40:
             moveHander('bottom')
             break
+          // 删除
+          case 46:
+            delHandler()
+            break
+          // 复制
+          case 67:
+            copyHandler()
+            break
           default:
         }
       }
@@ -149,7 +166,7 @@ const DesignHeader: FC<IDesignHeaderProps> = ({
     return () => {
       document.removeEventListener('keyup', keyupHander)
     }
-  }, [undoHander, redoHandler, moveHander, currentWidgetId])
+  }, [undoHander, redoHandler, moveHander, delHandler, copyHandler, currentWidgetId])
 
   return (
     <div className='app-screen-disign__header'>
@@ -194,6 +211,7 @@ const DesignHeader: FC<IDesignHeaderProps> = ({
         </ul>
         <ul className='shortcuts-group'>
           <li
+            onClick={copyHandler}
             className={`${currentWidgetId && !currentWidgetId.includes(',') ? '' : 'is-disabled'}`}>
             <Tooltip title="复制(ctrl+c)" placement="bottom">
               <CopyOutlined />
@@ -201,9 +219,9 @@ const DesignHeader: FC<IDesignHeaderProps> = ({
             </Tooltip>
           </li>
           <li
-            onClick={delHander}
+            onClick={delHandler}
             className={`${currentWidgetId && !currentWidgetId.includes(',') ? '' : 'is-disabled'}`}>
-            <Tooltip title="删除(del)" placement="bottom">
+            <Tooltip title="删除(ctrl+delete)" placement="bottom">
               <DeleteOutlined />
               <p>删除</p>
             </Tooltip>

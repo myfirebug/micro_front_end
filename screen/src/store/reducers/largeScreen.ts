@@ -1,5 +1,5 @@
-import { copyFile } from 'fs';
 import { ModifyAction } from '../actions/largeScreen';
+import { guid } from '@src/utils/tools';
 import {
 	LARGE_SCREEN,
 	ADD_LARGESCREEN_PAGE,
@@ -10,6 +10,7 @@ import {
 	DEL_LARGESCREEN_ELEMENT,
 	MODIFY_LARGESCREEN_ELEMENT,
 	CHANGE_LARGESCREEN_ELEMENET,
+	COPY_LARGESCREEN_ELEMENET,
 	UNDO_LARGESCREEN,
 	REDO_LARGESCREEN,
 	LARGESCREEN_STATE,
@@ -127,10 +128,10 @@ export const largeScreen = (
 			if (groupIndex !== -1) {
 				currentPage.widgets[groupIndex].widgets = currentPage.widgets[
 					groupIndex
-				].widgets.filter((item) => item.id !== action.id);
+				].widgets.filter((item) => item.id !== copy.currentWidgetId);
 			} else {
 				currentPage.widgets = currentPage.widgets.filter(
-					(item) => item.id !== action.id
+					(item) => item.id !== copy.currentWidgetId
 				);
 			}
 
@@ -218,6 +219,56 @@ export const largeScreen = (
 				pastPage: [...copy.pastPage, currentPage],
 				currentWidgetId: action.id,
 				currentWidgetGroupId: action.groupId || ''
+			};
+		}
+		case COPY_LARGESCREEN_ELEMENET: {
+			const currentPage: IPage = copy.currentPage;
+			const groupIndex = currentPage.widgets.findIndex(
+				(item) => item.id === copy.currentWidgetGroupId
+			);
+			const copyElementId: string = guid();
+			// 如果存在分组
+			if (groupIndex !== -1) {
+				const index = currentPage.widgets[groupIndex].widgets.findIndex(
+					(item) => item.id === copy.currentWidgetId
+				);
+				if (index !== -1) {
+					const copyElement = {
+						...currentPage.widgets[groupIndex].widgets[index],
+						id: copyElementId,
+						label: `[复制]${currentPage.widgets[groupIndex].widgets[index].label}`
+					};
+					currentPage.widgets[groupIndex].widgets.splice(
+						index + 1,
+						0,
+						copyElement
+					);
+					copy.currentWidgetId = copyElementId;
+					copy.currentWidget = {
+						...copyElement
+					};
+				}
+			} else {
+				const index = currentPage.widgets.findIndex(
+					(item) => item.id === copy.currentWidgetId
+				);
+				if (index !== -1) {
+					const copyElement = {
+						...currentPage.widgets[index],
+						id: copyElementId,
+						label: `[复制]${currentPage.widgets[index].label}`
+					};
+					currentPage.widgets.splice(index + 1, 0, copyElement);
+					copy.currentWidgetId = copyElementId;
+					copy.currentWidget = {
+						...copyElement
+					};
+				}
+			}
+
+			return {
+				...copy,
+				pastPage: [...copy.pastPage, currentPage]
 			};
 		}
 		// 撤销

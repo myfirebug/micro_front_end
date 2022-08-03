@@ -15,6 +15,7 @@ import {
   addLargeScreenElement,
   delLargeScreenElement,
   modifyLargeScreenElement,
+  copyLargeScreenElement,
   undoLargeScreen,
   redoLargeScreen,
   modifyScreen,
@@ -49,7 +50,8 @@ interface IDisignProps {
   addLargeScreenElement: (data: any) => void;
   modifyLargeScreenElement: (id: string, data: IWidget, groupId?: string) => void;
   changeLargeScreenElement: (id: string, groupId?: string) => void;
-  delLargeScreenElement: (id: string) => void;
+  delLargeScreenElement: () => void;
+  copyLargeScreenElement: () => void;
   currentPage: IPage;
   currentWidgetId: string;
   currentWidget: IWidget;
@@ -81,7 +83,8 @@ const Disign: FC<IDisignProps> = ({
   redoLargeScreen,
   changeLargeScreenElement,
   currentWidgetGroupId,
-  delLargeScreenElement
+  delLargeScreenElement,
+  copyLargeScreenElement
 }) => {
 
   // 获取装组件的盒子，这里需要获取他的宽度
@@ -132,6 +135,7 @@ const Disign: FC<IDisignProps> = ({
         modifyLargeScreenElement={modifyLargeScreenElement}
         setDrawer={setDrawer}
         delLargeScreenElement={delLargeScreenElement}
+        copyLargeScreenElement={copyLargeScreenElement}
         currentWidgetGroupId={currentWidgetGroupId}
         currentWidget={currentWidget} />
       {/* 内容区 */}
@@ -240,7 +244,8 @@ const mapDispatchToProps = {
   redoLargeScreen,
   modifyScreen,
   changeLargeScreenPage,
-  changeLargeScreenElement
+  changeLargeScreenElement,
+  copyLargeScreenElement
 };
 
 
