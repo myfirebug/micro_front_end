@@ -11,7 +11,7 @@ interface IDesignBodyCenterProps {
   currentWidgetId: string;
   currentWidget: IWidget;
   cale: number;
-  modifyLargeScreenElement: (id: string, data: IWidget, groupId?: string) => void;
+  modifyLargeScreenElement: (id: string, data: IWidget) => void;
   changeLargeScreenElement: (id: string, groupId?: string) => void;
   screen: any;
   currentWidgetGroupId: string;
@@ -260,6 +260,10 @@ const DesignBodyCenter: FC<IDesignBodyCenterProps> = ({
                         background: '#fff',
                         borderRadius: 10
                       }
+                    }}
+                    size={{
+                      width: item.coordinateValue.width,
+                      height: item.coordinateValue.height
                     }}
                     key={index}
                     scale={cale}

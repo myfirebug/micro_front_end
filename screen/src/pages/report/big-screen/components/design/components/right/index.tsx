@@ -8,6 +8,9 @@ import { SketchPicker } from 'react-color'
 import { IPage, IScreen, IWidget } from '@src/store/actionType'
 import Wrapper from '@src/components/wrapper'
 import { LeftOutlined, RightOutlined } from '@ant-design/icons'
+// JSON编辑器
+import ReactJson from 'react-json-view'
+import JsonEditor from '@src/components/json-editor'
 
 const { TextArea } = Input
 const { TabPane } = Tabs
@@ -19,7 +22,7 @@ interface IDesignBodyRightProps {
   modifyScreen: (datas: any) => void;
   currentWidgetId: string;
   currentWidget: IWidget;
-  modifyLargeScreenElement: (id: string, data: IWidget, groupId?: string) => void;
+  modifyLargeScreenElement: (id: string, data: IWidget) => void;
   currentPage: IPage;
   setRightFlag: React.Dispatch<React.SetStateAction<boolean>>;
   rightFlag: Boolean;
@@ -42,6 +45,8 @@ const DesignBodyRight: FC<IDesignBodyRightProps> = ({
   const [pageForm] = Form.useForm()
   // 坐标from
   const [dynamicForm] = Form.useForm()
+  // 数据
+  const [dataForm] = Form.useForm()
 
   useEffect(() => {
     if (currentWidget.configureValue) {
@@ -49,6 +54,9 @@ const DesignBodyRight: FC<IDesignBodyRightProps> = ({
     }
     if (currentWidget.coordinateValue) {
       dynamicForm.setFieldsValue(currentWidget.coordinateValue)
+    }
+    if (currentWidget.dataValue) {
+      dataForm.setFieldsValue(currentWidget.dataValue)
     }
   }, [currentWidget])
   // 判断数据是Array 或者 object
@@ -203,15 +211,6 @@ const DesignBodyRight: FC<IDesignBodyRightProps> = ({
                                   form.setFieldsValue({
                                     [item.name]: e.hex
                                   })
-                                  // if (!field) {
-                                  //   callback && callback({
-                                  //     [item.name]: e.hex
-                                  //   })
-                                  // } else {
-                                  //   const newCurrentWidget = JSON.parse(JSON.stringify(currentWidget))
-                                  //   newCurrentWidget[field][item.name] = e.hex
-                                  //   callback && callback(currentWidgetId, newCurrentWidget)
-                                  // }
                                   onChangeHandler(callback, item.name, e.hex, field)
                                 }} />
                             </div>
@@ -222,6 +221,16 @@ const DesignBodyRight: FC<IDesignBodyRightProps> = ({
 
                   </Col>
                 </Row>
+              </Form.Item>
+            }
+            {
+              item.type === 'JsonEdit' &&
+              <Form.Item
+                label={item.label}
+                name={item.name}
+                rules={[{ required: item.require }]}
+              >
+                <JsonEditor value={{ a: 1, b: 2 }} />
               </Form.Item>
             }
           </div >
@@ -311,12 +320,6 @@ const DesignBodyRight: FC<IDesignBodyRightProps> = ({
                 wrapperCol={{ span: 18 }}
                 autoComplete="off"
                 labelAlign="left"
-              // onValuesChange={(changedValues, allValues) => {
-              //   modifyLargeScreenElement(currentWidgetId, {
-              //     ...currentWidget,
-              //     configureValue: allValues
-              //   })
-              // }}
               >
                 {
                   renderDynamicForm(
@@ -329,7 +332,22 @@ const DesignBodyRight: FC<IDesignBodyRightProps> = ({
               </Form>
             </TabPane>
             <TabPane tab="数据" key="3">
-              Content of Tab Pane 3
+              <Form
+                form={dataForm}
+                labelCol={{ span: 6 }}
+                wrapperCol={{ span: 18 }}
+                autoComplete="off"
+                labelAlign="left"
+              >
+                {
+                  renderDynamicForm(
+                    currentWidget.data || [],
+                    dataForm,
+                    modifyLargeScreenElement,
+                    'dataValue'
+                  )
+                }
+              </Form>
             </TabPane>
             <TabPane tab="坐标" key="4">
               <Form

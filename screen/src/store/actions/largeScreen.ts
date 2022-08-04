@@ -194,8 +194,7 @@ const actionDelLargeScreenElement = (): IDelLargeScreenElementAction => ({
 // 修改元素数据的方法
 const actionModifyLargeScreenElement = (
 	id: string,
-	data: IWidget,
-	groupId?: string
+	data: IWidget
 ): IModifyLargeScreenElementAction => ({
 	type: MODIFY_LARGESCREEN_ELEMENT,
 	id,
@@ -289,8 +288,8 @@ export const delLargeScreenElement = () => (dispatch: Dispatch) => {
 
 // 修改元素数据
 export const modifyLargeScreenElement =
-	(id: string, data: IWidget, groupId?: string) => (dispatch: Dispatch) => {
-		dispatch(actionModifyLargeScreenElement(id, data, groupId));
+	(id: string, data: IWidget) => (dispatch: Dispatch) => {
+		dispatch(actionModifyLargeScreenElement(id, data));
 	};
 
 // 切换元素数据

@@ -50,7 +50,7 @@ interface IDisignProps {
   modifyLargeScreenPage: (id: string, data: IPage, callback?: Function) => void;
   changeLargeScreenPage: (id: string, callback?: Function) => void;
   addLargeScreenElement: (data: any) => void;
-  modifyLargeScreenElement: (id: string, data: IWidget, groupId?: string) => void;
+  modifyLargeScreenElement: (id: string, data: IWidget) => void;
   changeLargeScreenElement: (id: string, groupId?: string) => void;
   delLargeScreenElement: () => void;
   copyLargeScreenElement: () => void;
@@ -170,7 +170,7 @@ const Disign: FC<IDisignProps> = ({
         <div
           style={{
             paddingLeft: leftFlag ? 200 : 0,
-            paddingRight: rightFlag && pages.length ? 300 : 0
+            paddingRight: rightFlag && pages.length ? 400 : 0
           }}
           className='app-screen-disign__body--center'>
           <div

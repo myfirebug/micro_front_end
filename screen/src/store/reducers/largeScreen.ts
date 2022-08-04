@@ -23,6 +23,33 @@ import {
 // 配置文件
 import { widgetConfigure } from '@src/widget/tools';
 
+/**
+ * 找到所有组件的坐标
+ * @param datas 组件列表
+ * @returns
+ */
+function getCoordinates(datas: IWidget[]) {
+	let result: {
+		left: number[];
+		top: number[];
+		right: number[];
+		bottom: number[];
+	} = {
+		left: [],
+		top: [],
+		right: [],
+		bottom: []
+	};
+	datas.forEach((item) => {
+		result.left.push(item.coordinateValue.left);
+		result.top.push(item.coordinateValue.top);
+		result.bottom.push(item.coordinateValue.top + item.coordinateValue.height);
+		result.right.push(item.coordinateValue.left + item.coordinateValue.width);
+	});
+
+	return result;
+}
+
 // 处理并返回 state
 const initialState = {
 	pages: [],
@@ -363,11 +390,6 @@ export const largeScreen = (
 		}
 		// 分组
 		case GROUP: {
-			// 找到子组件的坐标
-			let left: any[] = [];
-			let top: any[] = [];
-			let bottom: any[] = [];
-			let right: any[] = [];
 			let subWidgets = [];
 			const currentPage: IPage = copy.currentPage;
 			const groupId = guid();
@@ -375,13 +397,8 @@ export const largeScreen = (
 			subWidgets = currentPage.widgets.filter((item) =>
 				copy.currentWidgetId.includes(item.id)
 			);
-			// 保存所有的坐标
-			subWidgets.forEach((item) => {
-				left.push(item.coordinateValue.left);
-				top.push(item.coordinateValue.top);
-				bottom.push(item.coordinateValue.top + item.coordinateValue.height);
-				right.push(item.coordinateValue.left + item.coordinateValue.width);
-			});
+
+			const coordinates = getCoordinates(subWidgets);
 
 			// 找到组的配置
 			const index = widgetConfigure.findIndex(
@@ -395,15 +412,15 @@ export const largeScreen = (
 					...item,
 					coordinateValue: {
 						...item.coordinateValue,
-						left: item.coordinateValue.left - Math.min(...left),
-						top: item.coordinateValue.top - Math.min(...top)
+						left: item.coordinateValue.left - Math.min(...coordinates.left),
+						top: item.coordinateValue.top - Math.min(...coordinates.top)
 					}
 				})),
 				coordinateValue: {
-					left: Math.min(...left),
-					top: Math.min(...top),
-					width: Math.max(...right) - Math.min(...left),
-					height: Math.max(...bottom) - Math.min(...top)
+					left: Math.min(...coordinates.left),
+					top: Math.min(...coordinates.top),
+					width: Math.max(...coordinates.right) - Math.min(...coordinates.left),
+					height: Math.max(...coordinates.bottom) - Math.min(...coordinates.top)
 				}
 			};
 
