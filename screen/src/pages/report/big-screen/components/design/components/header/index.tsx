@@ -105,10 +105,18 @@ const DesignHeader: FC<IDesignHeaderProps> = ({
   }, [currentWidgetId])
 
   // 分组
-  const groupHander = useCallback(() => {
+  const groupHandler = useCallback(() => {
     if (currentWidgetId && currentWidgetId.includes(',')) {
       group()
       message.success('分组成功')
+    }
+  }, [currentWidgetId])
+
+  // 取消分组
+  const cancelGroupHandler = useCallback(() => {
+    if (currentWidgetId && !currentWidgetId.includes(',')) {
+      cancelGroup()
+      message.success('取消分组成功')
     }
   }, [currentWidgetId])
 
@@ -209,7 +217,7 @@ const DesignHeader: FC<IDesignHeaderProps> = ({
       <div className='app-screen-disign__header--center'>
         <ul className='shortcuts-group'>
           <li
-            onClick={groupHander}
+            onClick={groupHandler}
             className={`${currentWidgetGroupId || !currentWidgetId.includes(',') ? 'is-disabled' : ''}`}>
             <Tooltip title="分组" placement="bottom">
               <FolderAddOutlined />
@@ -217,7 +225,8 @@ const DesignHeader: FC<IDesignHeaderProps> = ({
             </Tooltip>
           </li>
           <li
-            className={`${!currentWidgetGroupId || currentWidgetId.includes(',') ? 'is-disabled' : ''}`}>
+            onClick={cancelGroupHandler}
+            className={`${currentWidgetGroupId && currentWidgetGroupId === currentWidgetId ? '' : 'is-disabled'}`}>
             <Tooltip title="拆分" placement="bottom">
               <FolderOutlined />
               <p>拆分</p>

@@ -361,6 +361,7 @@ export const largeScreen = (
 				...copy
 			};
 		}
+		// 分组
 		case GROUP: {
 			const currentPage: IPage = copy.currentPage;
 			const groupId = guid();
@@ -397,8 +398,36 @@ export const largeScreen = (
 				currentWidget: groupsElements
 			};
 		}
+		// 取消分组
 		case CANCEL_GROUP: {
-			return state;
+			const currentPage: IPage = copy.currentPage;
+			const index = currentPage.widgets.findIndex(
+				(item) => item.id === copy.currentWidgetId
+			);
+			if (index !== -1 && copy.currentWidgetGroupId === copy.currentWidgetId) {
+				// 找到当前组下的所有组件，并且将当前组件的left,top与组的left,top相加
+				const insertWidgets = currentPage.widgets[index].widgets.map(
+					(item) => ({
+						...item,
+						coordinateValue: {
+							...item.coordinateValue,
+							left:
+								currentPage.widgets[index].coordinateValue.left +
+								item.coordinateValue.left,
+							top:
+								currentPage.widgets[index].coordinateValue.top +
+								item.coordinateValue.top
+						}
+					})
+				);
+				currentPage.widgets.splice(index, 1, ...insertWidgets);
+			}
+			return {
+				...copy,
+				currentWidget: {} as IWidget,
+				currentWidgetGroupId: '',
+				currentWidgetId: ''
+			};
 		}
 		default:
 			return state;
