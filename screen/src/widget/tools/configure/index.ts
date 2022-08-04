@@ -8,5 +8,7 @@
 
 // 文本框配置
 import text from './widget/text';
+// 文本框配置
+import group from './widget/group';
 
-export const widgetConfigure = [text];
+export const widgetConfigure: any = [text, group];

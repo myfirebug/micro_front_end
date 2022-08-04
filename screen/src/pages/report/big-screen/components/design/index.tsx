@@ -20,7 +20,9 @@ import {
   redoLargeScreen,
   modifyScreen,
   changeLargeScreenPage,
-  changeLargeScreenElement
+  changeLargeScreenElement,
+  group,
+  cancelGroup
 } from '@store/actions/largeScreen'
 
 
@@ -52,6 +54,8 @@ interface IDisignProps {
   changeLargeScreenElement: (id: string, groupId?: string) => void;
   delLargeScreenElement: () => void;
   copyLargeScreenElement: () => void;
+  group: () => void;
+  cancelGroup: () => void;
   currentPage: IPage;
   currentWidgetId: string;
   currentWidget: IWidget;
@@ -84,7 +88,9 @@ const Disign: FC<IDisignProps> = ({
   changeLargeScreenElement,
   currentWidgetGroupId,
   delLargeScreenElement,
-  copyLargeScreenElement
+  copyLargeScreenElement,
+  group,
+  cancelGroup
 }) => {
 
   // 获取装组件的盒子，这里需要获取他的宽度
@@ -120,6 +126,14 @@ const Disign: FC<IDisignProps> = ({
       window.removeEventListener('resize', resizeHander)
     }
   }, [elementsWrapper.current])
+
+  // 取消选中元素或者组
+  const cancelSelectedElementHander = (e: any) => {
+    const target = e.target
+    if ((target.nodeName === 'rect' || target.className === 'elements-wrap-canvas') && currentWidgetId) {
+      changeLargeScreenElement('')
+    }
+  }
   return (
     <div className='app-screen-disign'>
       {/* 头部 */}
@@ -137,6 +151,8 @@ const Disign: FC<IDisignProps> = ({
         delLargeScreenElement={delLargeScreenElement}
         copyLargeScreenElement={copyLargeScreenElement}
         currentWidgetGroupId={currentWidgetGroupId}
+        group={group}
+        cancelGroup={cancelGroup}
         currentWidget={currentWidget} />
       {/* 内容区 */}
       <div className='app-screen-disign__body'>
@@ -164,6 +180,8 @@ const Disign: FC<IDisignProps> = ({
               className='elements-wrap'>
               <Ruler />
               <div
+                onClick={cancelSelectedElementHander}
+                className="elements-wrap-canvas"
                 style={{
                   position: 'absolute',
                   zIndex: 1,
@@ -180,6 +198,7 @@ const Disign: FC<IDisignProps> = ({
                   currentWidgetId={currentWidgetId}
                   cale={cale}
                   screen={screen}
+                  currentWidgetGroupId={currentWidgetGroupId}
                   changeLargeScreenElement={changeLargeScreenElement}
                   currentWidget={currentWidget}
                   modifyLargeScreenElement={modifyLargeScreenElement} />
@@ -245,7 +264,9 @@ const mapDispatchToProps = {
   modifyScreen,
   changeLargeScreenPage,
   changeLargeScreenElement,
-  copyLargeScreenElement
+  copyLargeScreenElement,
+  group,
+  cancelGroup
 };
 
 

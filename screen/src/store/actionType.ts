@@ -183,6 +183,12 @@ export type UNDO_LARGESCREEN_TYPE = typeof UNDO_LARGESCREEN;
 // 恢复
 export const REDO_LARGESCREEN = 'REDO_LARGESCREEN';
 export type REDO_LARGESCREEN_TYPE = typeof REDO_LARGESCREEN;
+// 分组
+export const GROUP = 'GROUP';
+export type GROUP_TYPE = typeof GROUP;
+// 拆分（取消分组）
+export const CANCEL_GROUP = 'CANCEL_GROUP';
+export type CANCEL_GROUP_TYPE = typeof CANCEL_GROUP;
 
 // 所有的数据的数据类型, 注意这里每加一个state模块都必须在这里进行申明
 export type ALL_STATE = {

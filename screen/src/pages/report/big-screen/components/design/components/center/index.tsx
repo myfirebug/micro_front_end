@@ -14,6 +14,7 @@ interface IDesignBodyCenterProps {
   modifyLargeScreenElement: (id: string, data: IWidget, groupId?: string) => void;
   changeLargeScreenElement: (id: string, groupId?: string) => void;
   screen: any;
+  currentWidgetGroupId: string;
 }
 
 const DesignBodyCenter: FC<IDesignBodyCenterProps> = ({
@@ -23,7 +24,8 @@ const DesignBodyCenter: FC<IDesignBodyCenterProps> = ({
   changeLargeScreenElement,
   currentWidget,
   cale,
-  screen
+  screen,
+  currentWidgetGroupId
 }) => {
 
   // 移动时
@@ -57,18 +59,130 @@ const DesignBodyCenter: FC<IDesignBodyCenterProps> = ({
       <>
         {
           widgets.map((item: any, index: number) => {
+            // 说明有group组件
             if (item.widgets) {
               const Widget = components[item.code]
               if (Widget) {
                 return (
-                  <Widget>
-                    {
-                      renderWidgets(item.widgets, item.id)
-                    }
-                  </Widget>
+                  <Rnd
+                    className={item.id !== currentWidgetId ? 'react-draggable-disabled react-draggable-group' : 'react-draggable-group'}
+                    default={{
+                      x: item.coordinateValue.left,
+                      y: item.coordinateValue.top,
+                      width: item.coordinateValue.width,
+                      height: item.coordinateValue.height
+                    }}
+                    position={{
+                      x: item.coordinateValue.left,
+                      y: item.coordinateValue.top
+                    }}
+                    resizeHandleWrapperClass="handle"
+                    resizeHandleWrapperStyle={{
+                      position: 'absolute',
+                      left: 0,
+                      top: 0,
+                      right: 0,
+                      bottom: 0,
+                      border: 'dashed 2px #fff'
+                    }}
+                    resizeHandleStyles={{
+                      bottom: {
+                        width: 20,
+                        height: 20,
+                        background: '#fff',
+                        borderRadius: 10,
+                        left: '50%',
+                        bottom: -10,
+                        marginLeft: -10
+                      },
+                      bottomLeft: {
+                        background: '#fff',
+                        borderRadius: 10
+                      },
+                      bottomRight: {
+                        background: '#fff',
+                        borderRadius: 10
+                      },
+                      left: {
+                        width: 20,
+                        height: 20,
+                        background: '#fff',
+                        borderRadius: 10,
+                        top: '50%',
+                        left: -10,
+                        marginTop: -10
+                      },
+                      right: {
+                        width: 20,
+                        height: 20,
+                        background: '#fff',
+                        borderRadius: 10,
+                        top: '50%',
+                        right: -10,
+                        marginTop: -10
+                      },
+                      top: {
+                        width: 20,
+                        height: 20,
+                        background: '#fff',
+                        borderRadius: 10,
+                        left: '50%',
+                        top: -10,
+                        marginLeft: -10
+                      },
+                      topLeft: {
+                        background: '#fff',
+                        borderRadius: 10
+                      },
+                      topRight: {
+                        background: '#fff',
+                        borderRadius: 10
+                      }
+                    }}
+                    size={{
+                      width: item.coordinateValue.width,
+                      height: item.coordinateValue.height
+                    }}
+                    key={index}
+                    scale={cale}
+                    disableDragging={item.id !== currentWidgetId}
+                    onDragStop={dragStopHandle}
+                    onResizeStop={resizeHandle}
+                    bounds="parent"
+                  >
+                    <div
+                      onClick={(e: any) => {
+                        e.preventDefault()
+                        e.stopPropagation()
+                        if (item.id !== currentWidgetId) {
+                          changeLargeScreenElement(item.id, item.id)
+                        }
+                      }}
+                      className={`app-widget__item ${currentWidgetId.includes(item.id) ? 'is-active' : ''}`}>
+                      <div className="mask">
+                        {/* 辅助线 */}
+                        <div className='line-top'></div>
+                        <div className='line-left'></div>
+                        {/* 坐标值 */}
+                        <div className="label">{item.coordinateValue.left},{item.coordinateValue.top}</div>
+                      </div>
+                      <Widget
+                        style={{
+                          width: item.coordinateValue.width,
+                          height: item.coordinateValue.height,
+                          ...item.configureValue
+                        }}
+                        className={item.id === currentWidgetGroupId ? 'is-active' : ''}>
+                        {
+                          renderWidgets(item.widgets, item.id)
+                        }
+                      </Widget>
+                    </div>
+                  </Rnd>
                 )
               }
             } else {
+              // 没有group组件
               const Widget = components[item.code]
               if (Widget) {
                 return (
@@ -156,8 +270,10 @@ const DesignBodyCenter: FC<IDesignBodyCenterProps> = ({
                   >
                     <div
                       onClick={(e) => {
+                        e.preventDefault()
+                        e.stopPropagation()
                         if (item.id !== currentWidgetId) {
-                          if (e.ctrlKey && !groupId) {
+                          if (e.ctrlKey && !groupId && !currentWidgetGroupId) {
                             //
                             changeLargeScreenElement(currentWidgetId ? `${currentWidgetId},${item.id}` : item.id)
                           } else {
@@ -227,7 +343,7 @@ const DesignBodyCenter: FC<IDesignBodyCenterProps> = ({
                 ></rect>
               </pattern>
             </defs>
-            <rect id="wrapper" x="0" y="0" fill="url(#p1)" width="100%" height="100%"></rect>
+            <rect id="wrapper" className='grid' x="0" y="0" fill="url(#p1)" width="100%" height="100%"></rect>
           </svg> : null
       }
       {

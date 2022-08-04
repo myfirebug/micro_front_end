@@ -25,6 +25,10 @@ import {
 	UNDO_LARGESCREEN_TYPE,
 	REDO_LARGESCREEN,
 	REDO_LARGESCREEN_TYPE,
+	GROUP,
+	GROUP_TYPE,
+	CANCEL_GROUP,
+	CANCEL_GROUP_TYPE,
 	IPage,
 	IScreen,
 	IWidget
@@ -84,7 +88,6 @@ export interface IModifyLargeScreenElementAction {
 	type: MODIFY_LARGESCREEN_ELEMENT_TYPE;
 	id: string;
 	data: IWidget;
-	groupId?: string;
 }
 
 // 切换元素
@@ -109,6 +112,16 @@ export interface IRedoLargeScreenAction {
 	type: REDO_LARGESCREEN_TYPE;
 }
 
+// 分组
+export interface IGroupAction {
+	type: GROUP_TYPE;
+}
+
+// 拆分
+export interface ICancelGroupAction {
+	type: CANCEL_GROUP_TYPE;
+}
+
 // 定义 ModifyAction 类型
 export type ModifyAction =
 	| ILargeScreenAction
@@ -123,7 +136,9 @@ export type ModifyAction =
 	| ICopyLargeScreenElementAction
 	| IUndoLargeScreenAction
 	| IRedoLargeScreenAction
-	| IModifyScreenAction;
+	| IModifyScreenAction
+	| IGroupAction
+	| ICancelGroupAction;
 
 // 获取页面数据的方法
 const actionLargeScreen = (datas: IPage[]): ILargeScreenAction => ({
@@ -184,8 +199,7 @@ const actionModifyLargeScreenElement = (
 ): IModifyLargeScreenElementAction => ({
 	type: MODIFY_LARGESCREEN_ELEMENT,
 	id,
-	data,
-	groupId
+	data
 });
 
 // 切换元素数据的方法
@@ -211,6 +225,16 @@ const actionUndoLargeScreen = (): IUndoLargeScreenAction => ({
 // 恢复元素数据的方法
 const actionRedoLargeScreen = (): IRedoLargeScreenAction => ({
 	type: REDO_LARGESCREEN
+});
+
+// 分组的方法
+const actionGroup = (): IGroupAction => ({
+	type: GROUP
+});
+
+// 拆分的方法
+const actionCancelGroup = (): ICancelGroupAction => ({
+	type: CANCEL_GROUP
 });
 
 // 修改屏幕数据的方法
@@ -293,4 +317,14 @@ export const redoLargeScreen = () => (dispatch: Dispatch) => {
 // 修改屏幕数据
 export const modifyScreen = (datas: IScreen) => (dispatch: Dispatch) => {
 	dispatch(actionModifyScreen(datas));
+};
+
+// 分组
+export const group = () => (dispatch: Dispatch) => {
+	dispatch(actionGroup());
+};
+
+// 拆分
+export const cancelGroup = () => (dispatch: Dispatch) => {
+	dispatch(actionCancelGroup());
 };

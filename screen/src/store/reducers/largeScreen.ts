@@ -15,9 +15,13 @@ import {
 	REDO_LARGESCREEN,
 	LARGESCREEN_STATE,
 	MODIFY_SCREEN,
+	GROUP,
+	CANCEL_GROUP,
 	IPage,
 	IWidget
 } from '../actionType';
+// 配置文件
+import { widgetConfigure } from '@src/widget/tools';
 
 // 处理并返回 state
 const initialState = {
@@ -107,9 +111,18 @@ export const largeScreen = (
 		// 添加元素
 		case ADD_LARGESCREEN_ELEMENT: {
 			const currentPage: IPage = copy.currentPage;
-			currentPage.widgets = currentPage.widgets
-				? [...currentPage.widgets, action.data]
-				: [];
+			const groupIndex = currentPage.widgets.findIndex(
+				(item) => item.id === copy.currentWidgetGroupId
+			);
+			// 如果存在分组，直接添加到分组里面
+			if (groupIndex !== -1) {
+				currentPage.widgets[groupIndex].widgets = [
+					...currentPage.widgets[groupIndex].widgets,
+					action.data
+				];
+			} else {
+				currentPage.widgets = [...currentPage.widgets, action.data];
+			}
 			return {
 				...copy,
 				pastPage: [...copy.pastPage, currentPage],
@@ -125,10 +138,21 @@ export const largeScreen = (
 				(item) => item.id === copy.currentWidgetGroupId
 			);
 			// 如果存在分组
-			if (groupIndex !== -1) {
-				currentPage.widgets[groupIndex].widgets = currentPage.widgets[
-					groupIndex
-				].widgets.filter((item) => item.id !== copy.currentWidgetId);
+			if (
+				groupIndex !== -1 &&
+				copy.currentWidgetGroupId !== copy.currentWidgetId
+			) {
+				// 如果group里只有一个组件，那么就删除group组件
+				if (currentPage.widgets[groupIndex].widgets.length === 1) {
+					currentPage.widgets = currentPage.widgets.filter(
+						(item) => item.id !== copy.currentWidgetGroupId
+					);
+				} else {
+					// 否则删除group里的子组件
+					currentPage.widgets[groupIndex].widgets = currentPage.widgets[
+						groupIndex
+					].widgets.filter((item) => item.id !== copy.currentWidgetId);
+				}
 			} else {
 				currentPage.widgets = currentPage.widgets.filter(
 					(item) => item.id !== copy.currentWidgetId
@@ -149,10 +173,14 @@ export const largeScreen = (
 			const currentPage: IPage = copy.currentPage;
 			// 找组下标
 			const groupIndex = currentPage.widgets.findIndex(
-				(item) => item.id === action.groupId
+				(item) => item.id === copy.currentWidgetGroupId
 			);
 			// 如果有分组，则找分组下面的widget
-			if (groupIndex !== -1) {
+			if (
+				groupIndex !== -1 &&
+				copy.currentWidgetGroupId !== copy.currentWidgetId
+			) {
+				// console.log(currentPage.widgets[groupIndex].widgets);
 				currentPage.widgets[groupIndex].widgets = currentPage.widgets[
 					groupIndex
 				].widgets.map((item) => {
@@ -180,8 +208,7 @@ export const largeScreen = (
 				pastPage: [...copy.pastPage, currentPage],
 				currentPage: currentPage,
 				currentWidget: action.data,
-				currentWidgetId: action.id,
-				currentWidgetGroupId: action.groupId || ''
+				currentWidgetId: action.id
 			};
 		}
 		// 切换元素
@@ -193,7 +220,7 @@ export const largeScreen = (
 				(item) => item.id === action.groupId
 			);
 			// 如果有分组，则找分组下面的widget
-			if (groupIndex !== -1) {
+			if (groupIndex !== -1 && action.groupId !== action.id) {
 				const index = currentPage.widgets[groupIndex].widgets.findIndex(
 					(item) => item.id === action.id
 				);
@@ -221,6 +248,7 @@ export const largeScreen = (
 				currentWidgetGroupId: action.groupId || ''
 			};
 		}
+		// 复制
 		case COPY_LARGESCREEN_ELEMENET: {
 			const currentPage: IPage = copy.currentPage;
 			const groupIndex = currentPage.widgets.findIndex(
@@ -228,10 +256,14 @@ export const largeScreen = (
 			);
 			const copyElementId: string = guid();
 			// 如果存在分组
-			if (groupIndex !== -1) {
+			if (
+				groupIndex !== -1 &&
+				copy.currentWidgetGroupId !== copy.currentWidgetId
+			) {
 				const index = currentPage.widgets[groupIndex].widgets.findIndex(
 					(item) => item.id === copy.currentWidgetId
 				);
+				// 复制的是group里的某一个组件
 				if (index !== -1) {
 					const copyElement = {
 						...currentPage.widgets[groupIndex].widgets[index],
@@ -249,15 +281,33 @@ export const largeScreen = (
 					};
 				}
 			} else {
+				let copyElement: IWidget = {} as IWidget;
 				const index = currentPage.widgets.findIndex(
 					(item) => item.id === copy.currentWidgetId
 				);
 				if (index !== -1) {
-					const copyElement = {
-						...currentPage.widgets[index],
-						id: copyElementId,
-						label: `[复制]${currentPage.widgets[index].label}`
-					};
+					// 说明复制的是group组件包含里面的子组件，这时需要把子组件的Id都给重置一次，不然在选择group里的子组件时，会有多个存在
+					if (copy.currentWidgetGroupId === copy.currentWidgetId) {
+						copy.currentWidgetGroupId = copyElementId;
+						copyElement = {
+							...currentPage.widgets[index],
+							id: copyElementId,
+							label: `[复制]${currentPage.widgets[index].label}`,
+							widgets: currentPage.widgets[index].widgets.map((item) => ({
+								...item,
+								id: guid()
+							}))
+						};
+					} else {
+						copyElement = {
+							...currentPage.widgets[index],
+							id: copyElementId,
+							label: `[复制]${currentPage.widgets[index].label}`
+						};
+					}
+
+					console.log(copyElement, 'copyElement');
+
 					currentPage.widgets.splice(index + 1, 0, copyElement);
 					copy.currentWidgetId = copyElementId;
 					copy.currentWidget = {
@@ -310,6 +360,45 @@ export const largeScreen = (
 			return {
 				...copy
 			};
+		}
+		case GROUP: {
+			const currentPage: IPage = copy.currentPage;
+			const groupId = guid();
+			const subWidgets = currentPage.widgets.filter((item) =>
+				copy.currentWidgetId.includes(item.id)
+			);
+			// 找到组的配置
+			const index = widgetConfigure.findIndex(
+				(item: any) => item.type === 'group'
+			);
+			// 找到选中的组件
+			const groupsElements = {
+				...widgetConfigure[index],
+				id: groupId,
+				widgets: subWidgets,
+				coordinateValue: {
+					left: 100,
+					top: 100,
+					width: 500,
+					height: 500
+				}
+			};
+
+			// 删除原有的组件
+			currentPage.widgets = currentPage.widgets.filter(
+				(item) => !copy.currentWidgetId.includes(item.id)
+			);
+
+			currentPage.widgets.push(groupsElements);
+			return {
+				...copy,
+				currentWidgetId: groupId,
+				currentWidgetGroupId: groupId,
+				currentWidget: groupsElements
+			};
+		}
+		case CANCEL_GROUP: {
+			return state;
 		}
 		default:
 			return state;

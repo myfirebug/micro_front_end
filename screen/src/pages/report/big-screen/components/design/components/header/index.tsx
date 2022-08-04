@@ -40,6 +40,8 @@ interface IDesignHeaderProps {
   delLargeScreenElement: () => void;
   copyLargeScreenElement: () => void;
   currentWidgetGroupId: string;
+  group: () => void;
+  cancelGroup: () => void;
 }
 
 const DesignHeader: FC<IDesignHeaderProps> = ({
@@ -55,7 +57,9 @@ const DesignHeader: FC<IDesignHeaderProps> = ({
   modifyLargeScreenElement,
   currentWidgetGroupId,
   delLargeScreenElement,
-  copyLargeScreenElement
+  copyLargeScreenElement,
+  group,
+  cancelGroup
 }) => {
   // 向页面添加组件
   const addElement = (code: string) => {
@@ -63,7 +67,7 @@ const DesignHeader: FC<IDesignHeaderProps> = ({
       message.error('请先添加页面哦')
       return
     }
-    const index = widgetConfigure.findIndex(item => item.code === code)
+    const index = widgetConfigure.findIndex((item: any) => item.code === code)
     if (index !== -1) {
       addLargeScreenElement({
         id: guid(),
@@ -88,6 +92,7 @@ const DesignHeader: FC<IDesignHeaderProps> = ({
   const delHandler = useCallback(() => {
     if (currentWidgetId && !currentWidgetId.includes(',')) {
       delLargeScreenElement()
+      message.success('删除成功')
     }
   }, [currentWidgetId])
 
@@ -95,6 +100,15 @@ const DesignHeader: FC<IDesignHeaderProps> = ({
   const copyHandler = useCallback(() => {
     if (currentWidgetId && !currentWidgetId.includes(',')) {
       copyLargeScreenElement()
+      message.success('复制成功')
+    }
+  }, [currentWidgetId])
+
+  // 分组
+  const groupHander = useCallback(() => {
+    if (currentWidgetId && currentWidgetId.includes(',')) {
+      group()
+      message.success('分组成功')
     }
   }, [currentWidgetId])
 
@@ -195,6 +209,7 @@ const DesignHeader: FC<IDesignHeaderProps> = ({
       <div className='app-screen-disign__header--center'>
         <ul className='shortcuts-group'>
           <li
+            onClick={groupHander}
             className={`${currentWidgetGroupId || !currentWidgetId.includes(',') ? 'is-disabled' : ''}`}>
             <Tooltip title="分组" placement="bottom">
               <FolderAddOutlined />
