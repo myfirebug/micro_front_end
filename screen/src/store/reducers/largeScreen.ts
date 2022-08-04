@@ -363,11 +363,26 @@ export const largeScreen = (
 		}
 		// 分组
 		case GROUP: {
+			// 找到子组件的坐标
+			let left: any[] = [];
+			let top: any[] = [];
+			let bottom: any[] = [];
+			let right: any[] = [];
+			let subWidgets = [];
 			const currentPage: IPage = copy.currentPage;
 			const groupId = guid();
-			const subWidgets = currentPage.widgets.filter((item) =>
+
+			subWidgets = currentPage.widgets.filter((item) =>
 				copy.currentWidgetId.includes(item.id)
 			);
+			// 保存所有的坐标
+			subWidgets.forEach((item) => {
+				left.push(item.coordinateValue.left);
+				top.push(item.coordinateValue.top);
+				bottom.push(item.coordinateValue.top + item.coordinateValue.height);
+				right.push(item.coordinateValue.left + item.coordinateValue.width);
+			});
+
 			// 找到组的配置
 			const index = widgetConfigure.findIndex(
 				(item: any) => item.type === 'group'
@@ -376,12 +391,19 @@ export const largeScreen = (
 			const groupsElements = {
 				...widgetConfigure[index],
 				id: groupId,
-				widgets: subWidgets,
+				widgets: subWidgets.map((item) => ({
+					...item,
+					coordinateValue: {
+						...item.coordinateValue,
+						left: item.coordinateValue.left - Math.min(...left),
+						top: item.coordinateValue.top - Math.min(...top)
+					}
+				})),
 				coordinateValue: {
-					left: 100,
-					top: 100,
-					width: 500,
-					height: 500
+					left: Math.min(...left),
+					top: Math.min(...top),
+					width: Math.max(...right) - Math.min(...left),
+					height: Math.max(...bottom) - Math.min(...top)
 				}
 			};
 
